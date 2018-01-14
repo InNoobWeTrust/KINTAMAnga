@@ -1,0 +1,61 @@
+# This is a sample build configuration for Java � Gradle.
+# Check our guides at https://confluence.atlassian.com/x/zd-5Mw for more examples.
+# Only use spaces to indent your .yml configuration.
+# -----
+# You can specify a custom docker image from Docker Hub as your build environment.
+image: openjdk:8-jdk
+
+pipelines:
+  custom:
+    manual:
+      - step:
+         script: # Modify the commands below to build your repository.
+           # You must commit the Gradle wrapper to your repository
+           # https://docs.gradle.org/current/userguide/gradle_wrapper.html
+           - export LANG='en_US.UTF-8'
+           - export ANDROID_HOME=/opt/android-sdk
+           - export ANDROID_NDK_HOME=/opt/android-sdk/ndk-bundle
+           - export ANDROID_COMPILE_SDK=29
+           - export ANDROID_BUILD_TOOLS=29.0.3
+           - export ANDROID_SDK_TOOLS=26.1.1
+           - export ANDROID_NDK_VERSION=21
+           - export TERM=dumb
+           - export GRADLE_OPTS='-XX:+UseG1GC -XX:MaxGCPauseMillis=1000 -Dorg.gradle.jvmargs="-Xmx2048m -XX:MaxPermSize=1024m -XX:ReservedCodeCacheSize=440m -XX:+UseCompressedOops -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8" -Dorg.gradle.parallel=false -Dorg.gradle.daemon=false -Dorg.gradle.configureondemand=true'
+           - export _JAVA_OPTIONS='-Xms512m -Xmx1024m'
+           - apt-get --quiet clean --yes
+           - apt-get --quiet update --yes
+           - apt-get --quiet install --yes locales wget zip unzip lib32stdc++6 lib32z1
+           - wget --quiet --output-document=tools.zip https://dl.google.com/android/repository/sdk-tools-linux-3859397.zip
+           - unzip -q tools.zip
+           - rm -fr $ANDROID_HOME tools.zip
+           - mkdir -p $ANDROID_HOME
+           - mv tools $ANDROID_HOME/tools
+           # Fix gradle 3.0 problem
+           - mkdir --parents /root/.android && touch /root/.android/repositories.cfg
+           - mkdir "$ANDROID_HOME/licenses" || true
+           - echo -e "\n8933bad161af4178b1185d1a37fbf41ea5269c55" > "$ANDROID_HOME/licenses/android-sdk-license"
+           - echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > "$ANDROID_HOME/licenses/android-sdk-preview-license"
+           - echo y | $ANDROID_HOME/tools/bin/sdkmanager "platforms;android-${ANDROID_COMPILE_SDK}"
+           - echo y | $ANDROID_HOME/tools/bin/sdkmanager "platform-tools"
+           - echo y | $ANDROID_HOME/tools/bin/sdkmanager "build-tools;${ANDROID_BUILD_TOOLS}"
+           - echo y | $ANDROID_HOME/tools/bin/sdkmanager "extras;android;m2repository"
+           - echo y | $ANDROID_HOME/tools/bin/sdkmanager "extras;google;google_play_services"
+           - echo y | $ANDROID_HOME/tools/bin/sdkmanager "extras;google;m2repository"
+           - wget --quiet --output-document=android-ndk.zip http://dl.google.com/android/repository/android-ndk-r${ANDROID_NDK_VERSION}-linux-x86_64.zip
+           - unzip -q android-ndk.zip
+           - rm -fr ANDROID_NDK_HOME android-ndk.zip
+           - mv android-ndk-r${ANDROID_NDK_VERSION} ANDROID_NDK_HOME
+           - export ANDROID_SDK_HOME=$ANDROID_HOME
+           - export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$ANDROID_HOME/android-ndk
+           - chmod +x gradlew
+           - ./gradlew assemble
+           - cp -r app/build/outputs/ artifacts
+           - zip -9 -r artifacts.bb.zip artifacts
+           #- ./gradlew build
+           # Upload artifacts to downloads
+           # References:
+           #     * https://developer.atlassian.com/bitbucket/api/2/reference/resource/repositories/%7Busername%7D/%7Brepo_slug%7D/downloads
+           #     * https://confluence.atlassian.com/bitbucket/environment-variables-794502608.html
+           # Set variable USER_LOGIN via Bitbucket setting with your login information and choose secure then save. Example value my.email@bug.master:myp@55VV0rd
+           - curl -X POST --user ${USER_LOGIN} "https://api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"artifacts.bb.zip"
+           #- ./gradlew test

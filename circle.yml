@@ -1,0 +1,39 @@
+#
+# Build configuration for Circle CI
+#
+
+general:
+    artifacts:
+        - /home/ubuntu/kintamanga/app/build/outputs/apk/
+
+machine:
+    environment:
+        ANDROID_HOME: /usr/local/android-sdk-linux
+        GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx2048m -XX:MaxPermSize=1024m -XX:ReservedCodeCacheSize=440m -XX:+UseCompressedOops -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8" -Dorg.gradle.parallel=true -Dorg.gradle.configureondemand=true'
+        _JAVA_OPTIONS: "-Xms512m -Xmx1024m"
+    java:
+        version: oraclejdk8
+
+dependencies:
+    pre:
+        - echo y | android update sdk --no-ui --all --filter tools,platform-tools,android-25
+        - echo y | android update sdk --no-ui --all --filter build-tools-25.0.3
+        - echo y | android update sdk --no-ui --all --filter android-25
+        - echo y | android update sdk --no-ui --all --filter tools
+        - echo y | android update sdk --no-ui --all --filter extra-android-m2repository
+        - echo y | android update sdk --no-ui --all --filter extra-android-support
+        - echo y | android update sdk --no-ui --all --filter extra-google-google_play_services
+        - echo y | android update sdk --no-ui --all --filter extra-google-m2repository
+    override:
+        - chmod +x gradlew
+        - mkdir "$ANDROID_HOME/licenses" || true
+        - echo -e "\n8933bad161af4178b1185d1a37fbf41ea5269c55" > "$ANDROID_HOME/licenses/android-sdk-license"
+        - echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > "$ANDROID_HOME/licenses/android-sdk-preview-license"
+        - ANDROID_HOME=/usr/local/android-sdk-linux ./gradlew dependencies
+
+test:
+    override:
+        - (./gradlew assemble):
+            timeout: 360
+        # copy the build outputs to artifacts
+        - cp -r app/build/outputs $CIRCLE_ARTIFACTS

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="elementInfo"
+            type="io.github.innoobwetrust.kintamanga.ui.model.ElementInfo"/>
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/content_margin_xSmall">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/cardview_dark_background"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.3"
+                android:adjustViewBounds="true">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/elementInfoThumbnail"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:contentDescription="@string/cover_image_description"
+                    android:scaleType="fitCenter"
+                    app:imageUriCenterCrop="@{elementInfo.itemThumbnailUri}"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintDimensionRatio="h,1:1.412"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:srcCompat="@drawable/ic_broken_image_white_24dp"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.7"
+                android:orientation="vertical">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/elementInfoTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/content_margin_medium"
+                    android:ellipsize="marquee"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:gravity="start|center_vertical"
+                    android:marqueeRepeatLimit="marquee_forever"
+                    android:singleLine="true"
+                    android:text="@{elementInfo.itemTitle}"
+                    android:textAlignment="viewStart"
+                    android:textAppearance="?attr/textAppearanceListItem"
+                    android:textColor="@color/colorTextTitle"
+                    android:textSize="@dimen/item_title_medium_text_size"
+                    tools:text="Element title"/>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/elementInfoDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="start|center_vertical"
+                    android:layout_margin="@dimen/content_margin_medium"
+                    android:ellipsize="end"
+                    android:text="@{elementInfo.itemDescription}"
+                    android:textAlignment="viewStart"
+                    android:textAppearance="?attr/textAppearanceListItemSmall"
+                    android:textColor="@color/colorTextSubtitle"
+                    android:textSize="@dimen/item_title_small_text_size"
+                    tools:text="Element description"/>
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+</layout>

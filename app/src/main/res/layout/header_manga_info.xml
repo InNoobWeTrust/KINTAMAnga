@@ -1,0 +1,429 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View"/>
+
+        <variable
+            name="mangaBinding"
+            type="io.github.innoobwetrust.kintamanga.ui.model.MangaBinding"/>
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        tools:background="@color/colorPrimaryDark">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"/>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayoutRoot"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <!-- Cover image -->
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/mangaCoverImage"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/cover_image_description"
+                android:minHeight="200dp"
+                android:scaleType="fitCenter"
+                app:imageUriFitCenter="@{mangaBinding.mangaThumbnailUri}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/mangaLastUpdate"
+                app:layout_constraintHorizontal_weight="0.35"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:srcCompat="@drawable/ic_broken_image_white_24dp"/>
+
+            <!-- Update time -->
+            <LinearLayout
+                android:id="@+id/mangaLastUpdate"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/content_margin_medium"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_weight="0.75"
+                app:layout_constraintStart_toEndOf="@+id/mangaCoverImage"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iconMangaLastUpdate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/last_update_icon_description"
+                    android:scaleType="fitCenter"
+                    app:srcCompat="@drawable/ic_access_time_white_24dp"/>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/textMangaLastUpdate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/content_margin_medium"
+                    android:layout_marginStart="@dimen/content_margin_medium"
+                    android:gravity="start|center_vertical"
+                    android:text="@{mangaBinding.mangaLastUpdate}"
+                    android:textAlignment="viewStart"
+                    android:textAppearance="?attr/textAppearanceListItemSmall"
+                    android:textColor="@color/colorTextTitle"
+                    android:textSize="@dimen/item_title_small_text_size"
+                    tools:text="Feb 31, 2017 00:00:00"/>
+            </LinearLayout>
+
+            <!-- Source Name -->
+            <LinearLayout
+                android:id="@+id/mangaSourceName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/content_margin_medium"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/mangaCoverImage"
+                app:layout_constraintTop_toBottomOf="@+id/mangaLastUpdate">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iconSourceName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/alternative_title_icon_description"
+                    android:scaleType="fitCenter"
+                    app:srcCompat="@drawable/ic_cloud_white_24dp"/>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/textSourceName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/content_margin_medium"
+                    android:layout_marginStart="@dimen/content_margin_medium"
+                    android:gravity="start|center_vertical"
+                    android:text="@{mangaBinding.mangaSourceName}"
+                    android:textAlignment="viewStart"
+                    android:textAppearance="?attr/textAppearanceListItemSmall"
+                    android:textColor="@color/colorTextTitle"
+                    android:textSize="@dimen/item_title_small_text_size"
+                    tools:text="Sample source"/>
+            </LinearLayout>
+
+            <!-- Alternative title -->
+            <LinearLayout
+                android:id="@+id/mangaAlternativeTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/content_margin_medium"
+                android:orientation="horizontal"
+                android:visibility="@{mangaBinding.mangaAlternativeTitle.empty ? View.GONE : View.VISIBLE}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/mangaCoverImage"
+                app:layout_constraintTop_toBottomOf="@+id/mangaSourceName">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iconAlternativeTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/alternative_title_icon_description"
+                    android:scaleType="fitCenter"
+                    app:srcCompat="@drawable/ic_translate_white_24dp"/>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/textAlternativeTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/content_margin_medium"
+                    android:layout_marginStart="@dimen/content_margin_medium"
+                    android:gravity="start|center_vertical"
+                    android:text="@{mangaBinding.mangaAlternativeTitle}"
+                    android:textAlignment="viewStart"
+                    android:textAppearance="?attr/textAppearanceListItemSmall"
+                    android:textColor="@color/colorTextTitle"
+                    android:textSize="@dimen/item_title_small_text_size"
+                    tools:text="Alternative title"/>
+            </LinearLayout>
+
+            <!-- Artists -->
+            <LinearLayout
+                android:id="@+id/mangaArtists"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/content_margin_medium"
+                android:orientation="horizontal"
+                android:visibility="@{mangaBinding.mangaArtistsString.empty ? View.GONE : View.VISIBLE}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/mangaCoverImage"
+                app:layout_constraintTop_toBottomOf="@+id/mangaAlternativeTitle">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iconArtists"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/authors_icon_description"
+                    android:scaleType="fitCenter"
+                    app:srcCompat="@drawable/ic_brush_white_24dp"/>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/textArtists"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/content_margin_medium"
+                    android:layout_marginStart="@dimen/content_margin_medium"
+                    android:gravity="start|center_vertical"
+                    android:text="@{mangaBinding.mangaArtistsString}"
+                    android:textAlignment="viewStart"
+                    android:textAppearance="?attr/textAppearanceListItemSmall"
+                    android:textColor="@color/colorTextTitle"
+                    android:textSize="@dimen/item_title_small_text_size"
+                    tools:text="Artist #1, Artist #2, Artist #3"/>
+            </LinearLayout>
+
+            <!-- Authors -->
+            <LinearLayout
+                android:id="@+id/mangaAuthors"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/content_margin_medium"
+                android:orientation="horizontal"
+                android:visibility="@{mangaBinding.mangaAuthorsString.empty ? View.GONE : View.VISIBLE}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/mangaCoverImage"
+                app:layout_constraintTop_toBottomOf="@+id/mangaArtists">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iconAuthors"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/authors_icon_description"
+                    android:scaleType="fitCenter"
+                    app:srcCompat="@drawable/ic_lightbulb_outline_white_24dp"/>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/textAuthors"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/content_margin_medium"
+                    android:layout_marginStart="@dimen/content_margin_medium"
+                    android:gravity="start|center_vertical"
+                    android:text="@{mangaBinding.mangaAuthorsString}"
+                    android:textAlignment="viewStart"
+                    android:textAppearance="?attr/textAppearanceListItemSmall"
+                    android:textColor="@color/colorTextTitle"
+                    android:textSize="@dimen/item_title_small_text_size"
+                    tools:text="Author #1, Author #2, Author #3"/>
+            </LinearLayout>
+
+            <!-- Teams -->
+            <LinearLayout
+                android:id="@+id/mangaTeams"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/content_margin_medium"
+                android:orientation="horizontal"
+                android:visibility="@{mangaBinding.mangaTranslationTeamsString.empty ? View.GONE : View.VISIBLE}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/mangaCoverImage"
+                app:layout_constraintTop_toBottomOf="@+id/mangaAuthors">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iconTeams"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/teams_icon_description"
+                    android:scaleType="fitCenter"
+                    app:srcCompat="@drawable/ic_group_white_24dp"/>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/textTeams"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/content_margin_medium"
+                    android:layout_marginStart="@dimen/content_margin_medium"
+                    android:gravity="start|center_vertical"
+                    android:text="@{mangaBinding.mangaTranslationTeamsString}"
+                    android:textAlignment="viewStart"
+                    android:textAppearance="?attr/textAppearanceListItemSmall"
+                    android:textColor="@color/colorTextTitle"
+                    android:textSize="@dimen/item_title_small_text_size"
+                    tools:text="Team #1, Team #2, Team #3"/>
+            </LinearLayout>
+
+            <!-- Status -->
+            <LinearLayout
+                android:id="@+id/mangaStatus"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/content_margin_medium"
+                android:orientation="horizontal"
+                android:visibility="@{mangaBinding.mangaStatus.empty ? View.GONE : View.VISIBLE}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/mangaCoverImage"
+                app:layout_constraintTop_toBottomOf="@id/mangaTeams">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iconStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/status_icon_description"
+                    android:scaleType="fitCenter"
+                    app:srcCompat="@drawable/ic_timeline_white_24dp"/>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/textStatus"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/content_margin_medium"
+                    android:layout_marginStart="@dimen/content_margin_medium"
+                    android:gravity="start|center_vertical"
+                    android:text="@{mangaBinding.mangaStatus}"
+                    android:textAlignment="viewStart"
+                    android:textAppearance="?attr/textAppearanceListItemSmall"
+                    android:textColor="@color/colorTextTitle"
+                    android:textSize="@dimen/item_title_small_text_size"
+                    tools:text="On going"/>
+            </LinearLayout>
+
+            <!-- Genres -->
+            <LinearLayout
+                android:id="@+id/mangaGenres"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/content_margin_medium"
+                android:orientation="horizontal"
+                android:visibility="@{mangaBinding.mangaGenresString.empty ? View.GONE : View.VISIBLE}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/mangaCoverImage"
+                app:layout_constraintTop_toBottomOf="@+id/mangaStatus">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iconGenres"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/genres_icon_description"
+                    android:scaleType="fitCenter"
+                    app:srcCompat="@drawable/ic_local_offer_white_24dp"/>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/textGenres"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/content_margin_medium"
+                    android:layout_marginStart="@dimen/content_margin_medium"
+                    android:gravity="start|center_vertical"
+                    android:text="@{mangaBinding.mangaGenresString}"
+                    android:textAlignment="viewStart"
+                    android:textAppearance="?attr/textAppearanceListItemSmall"
+                    android:textColor="@color/colorTextTitle"
+                    android:textSize="@dimen/item_title_small_text_size"
+                    tools:text="Genre #1, Genre #2, Genre #3"/>
+            </LinearLayout>
+
+            <!-- Types -->
+            <LinearLayout
+                android:id="@+id/mangaTypes"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/content_margin_medium"
+                android:orientation="horizontal"
+                android:visibility="@{mangaBinding.mangaTypesString.empty ? View.GONE : View.VISIBLE}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/mangaCoverImage"
+                app:layout_constraintTop_toBottomOf="@+id/mangaGenres">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iconTypes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/genres_icon_description"
+                    android:scaleType="fitCenter"
+                    app:srcCompat="@drawable/ic_public_white_24dp"/>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/textTypes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/content_margin_medium"
+                    android:layout_marginStart="@dimen/content_margin_medium"
+                    android:gravity="start|center_vertical"
+                    android:text="@{mangaBinding.mangaTypesString}"
+                    android:textAlignment="viewStart"
+                    android:textAppearance="?attr/textAppearanceListItemSmall"
+                    android:textColor="@color/colorTextTitle"
+                    android:textSize="@dimen/item_title_small_text_size"
+                    tools:text="Type #1, Type #2, Type #3"/>
+            </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- Warning -->
+        <LinearLayout
+            android:id="@+id/mangaWarning"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/content_margin_medium"
+            android:orientation="horizontal"
+            android:visibility="@{mangaBinding.mangaWarning.empty ? View.GONE : View.VISIBLE}">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iconWarning"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/warning_icon_description"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/ic_warning_white_24dp"/>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/textWarning"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/content_margin_medium"
+                android:layout_marginStart="@dimen/content_margin_medium"
+                android:gravity="start|center_vertical"
+                android:text="@{mangaBinding.mangaWarning}"
+                android:textAlignment="viewStart"
+                android:textAppearance="?attr/textAppearanceListItemSmall"
+                android:textColor="@color/colorTextWarning"
+                android:textSize="@dimen/item_title_small_text_size"
+                tools:text="fasdgakwoeetiwengsikanganwignsaiongsjngxgckbvhnweritgiawkmn"/>
+        </LinearLayout>
+
+        <!-- Description -->
+        <LinearLayout
+            android:id="@+id/mangaDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/content_margin_medium"
+            android:orientation="horizontal"
+            android:visibility="@{mangaBinding.mangaDescription.empty ? View.GONE : View.VISIBLE}">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iconDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/description_icon_description"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/ic_description_white_24dp"/>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/textDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/content_margin_medium"
+                android:layout_marginStart="@dimen/content_margin_medium"
+                android:gravity="start|center_vertical"
+                android:text="@{mangaBinding.mangaDescription}"
+                android:textAlignment="viewStart"
+                android:textAppearance="?attr/textAppearanceListItemSmall"
+                android:textColor="@color/colorTextTitle"
+                android:textSize="@dimen/item_title_small_text_size"
+                tools:text="hyreatngwiagmfsl bnkmdsngioprnwaegmksdfnib kognaisngisanga okgnasoingiw"/>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/content_margin_xLarge"/>
+    </LinearLayout>
+</layout>

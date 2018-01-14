@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/chapter_item_option_download"
+        android:title="@string/chapter_item_option_download"/>
+    <item
+        android:id="@+id/chapter_item_option_delete"
+        android:title="@string/chapter_item_option_delete"/>
+    <item
+        android:id="@+id/chapter_item_option_toggle_read_status"
+        android:title="@string/chapter_item_option_toggle_view_status"/>
+</menu>

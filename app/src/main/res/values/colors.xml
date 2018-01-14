@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#646464</color>
+    <color name="colorPrimaryDark">#2F2F2F</color>
+    <color name="colorAccent">#ff3232</color>
+
+    <color name="colorPrimaryTransparent">#80646464</color>
+    <!--<color name="colorPrimaryDarkTransparent">#802F2F2F</color>-->
+
+    <color name="colorNavigationDrawerIcon">@android:color/white</color>
+    <color name="colorNavigationDrawerIconTitle">@android:color/white</color>
+
+    <color name="colorTextTitle">@android:color/white</color>
+    <color name="colorTextSubtitle">@color/colorDarkerWhite</color>
+    <color name="colorTextWarning">@android:color/holo_red_light</color>
+    <color name="color_overlay">#40000000</color>
+    <color name="color_status_overlay">#8F000000</color>
+    <color name="color_control_overlay">#c8000000</color>
+    <!--<color name="color_image_viewer_overlay">#40808080</color>-->
+
+    <color name="color_activity_background">@android:color/black</color>
+    <color name="color_button_accept">@color/colorDarkGreen</color>
+    <color name="color_button_reset">@color/colorDarkBlue</color>
+    <color name="color_button_cancel">@color/colorDarkRed</color>
+
+    <!-- Template color universal between themes -->
+    <color name="colorDarkBlue">#0000da</color>
+    <color name="colorDarkGreen">#00da00</color>
+    <color name="colorDarkRed">#da0000</color>
+    <color name="colorDarkerWhite">#969696</color>
+</resources>

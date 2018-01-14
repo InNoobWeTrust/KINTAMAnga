@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View"/>
+
+        <import type="io.github.innoobwetrust.kintamanga.R"/>
+
+        <variable
+            name="mangaBinding"
+            type="io.github.innoobwetrust.kintamanga.ui.model.MangaBinding"/>
+    </data>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/color_activity_background">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/headerBackground"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:contentDescription="@string/cover_image_description"
+                app:imageUriCenterCrop="@{mangaBinding.mangaThumbnailUri}"
+                app:layout_constraintBottom_toBottomOf="@+id/headerLayout"
+                app:layout_constraintEnd_toEndOf="@+id/headerLayout"
+                app:layout_constraintStart_toStartOf="@+id/headerLayout"
+                app:layout_constraintTop_toTopOf="@+id/headerLayout"
+                tools:srcCompat="@drawable/ic_broken_image_white_24dp"/>
+
+            <FrameLayout
+                android:id="@+id/headerLayout"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="@color/color_status_overlay"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toTopOf="@+id/headerSeparator"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_weight="0.5">
+
+                <androidx.core.widget.NestedScrollView
+                    android:id="@+id/nestedScrollView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:scrollbarSize="@dimen/content_margin_small"
+                    android:scrollbarStyle="insideOverlay"
+                    android:scrollbarThumbVertical="@color/colorPrimaryDark"
+                    android:scrollbarTrackVertical="@color/colorPrimary"
+                    android:scrollbars="vertical">
+
+                    <include
+                        android:id="@+id/headerMangaInfo"
+                        layout="@layout/header_manga_info"
+                        app:mangaBinding="@{mangaBinding}"/>
+                </androidx.core.widget.NestedScrollView>
+
+                <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    android:layout_gravity="top"
+                    android:theme="@style/AppTheme.AppBarOverlay"
+                    app:popupTheme="@style/AppTheme.PopupOverlay">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/mangaTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/content_margin_medium"
+                        android:ellipsize="marquee"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:gravity="start|center_vertical"
+                        android:marqueeRepeatLimit="marquee_forever"
+                        android:singleLine="true"
+                        android:text="@{mangaBinding.mangaTitle}"
+                        android:textAlignment="viewStart"
+                        android:textColor="@color/colorTextTitle"
+                        android:textSize="@dimen/item_title_large_text_size"/>
+                </androidx.appcompat.widget.Toolbar>
+                <ViewStub
+                    android:id="@+id/cab_stub"
+                    android:layout_width="match_parent"
+                    android:layout_height="?actionBarSize"
+                    android:layout_gravity="top"/>
+            </FrameLayout>
+
+            <View
+                android:id="@+id/headerSeparator"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/content_margin_xLarge"
+                android:background="@color/colorPrimaryTransparent"
+                android:orientation="vertical"
+                android:visibility="visible"
+                app:layout_constraintBottom_toTopOf="@+id/chaptersLayout"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/headerLayout"/>
+
+            <RelativeLayout
+                android:id="@+id/chaptersLayout"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="@color/color_activity_background"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/headerSeparator"
+                app:layout_constraintVertical_weight="0.45">
+
+                <com.afollestad.dragselectrecyclerview.DragSelectRecyclerView
+                    android:id="@+id/listChapters"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="@dimen/content_margin_small"
+                    android:layout_marginRight="@dimen/content_margin_small"
+                    app:fastScrollEnabled="true"
+                    app:fastScrollHorizontalThumbDrawable="@drawable/thumb_drawable"
+                    app:fastScrollHorizontalTrackDrawable="@drawable/line_drawable"
+                    app:fastScrollVerticalThumbDrawable="@drawable/thumb_drawable"
+                    app:fastScrollVerticalTrackDrawable="@drawable/line_drawable"
+                    app:dsrv_autoScrollEnabled="true"
+                    app:layoutManager="LinearLayoutManager"
+                    tools:listitem="@layout/holder_chapter"/>
+            </RelativeLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/mangaClearFab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/fab_margin"
+            android:visibility="@{mangaBinding.mangaIdIsNotNull ? View.VISIBLE : View.GONE}"
+            app:backgroundTint="@color/colorAccent"
+            app:layout_anchor="@id/headerLayout"
+            app:layout_anchorGravity="bottom|end"
+            app:srcCompat="@drawable/ic_delete_sweep_white_24dp"/>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/mangaShareFab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/fab_margin"
+            app:backgroundTint="@color/colorAccent"
+            app:layout_anchor="@id/headerLayout"
+            app:layout_anchorGravity="bottom|end"
+            app:srcCompat="@drawable/ic_share_white_24dp"/>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/mangaFavoriteFab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/fab_margin"
+            app:backgroundTint="@color/colorAccent"
+            app:layout_anchor="@id/headerLayout"
+            app:layout_anchorGravity="bottom|end"
+            app:srcCompat="@{mangaBinding.mangaFavorited ? R.drawable.ic_favorite_white_24dp : R.drawable.ic_favorite_border_white_24dp}"/>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/mangaMenuFab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/fab_margin"
+            app:backgroundTint="@color/colorAccent"
+            app:layout_anchor="@id/headerLayout"
+            app:layout_anchorGravity="bottom|end"
+            app:srcCompat="@drawable/ic_menu_white_24dp"/>
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/progress"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center"
+            android:contentDescription="@string/manga_info_loading_indicator_description"
+            app:srcCompat="@drawable/ic_hourglass_empty_white_24dp"/>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>

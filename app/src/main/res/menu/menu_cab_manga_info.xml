@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/select_all"
+        android:icon="@drawable/ic_select_all_white_24dp"
+        android:title="@string/chapters_select_cab_select_all_action_title"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/invert_selection"
+        android:icon="@drawable/ic_shuffle_white_24dp"
+        android:title="@string/chapters_select_cab_invert_selection_action_title"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/remove_chapters"
+        android:icon="@drawable/ic_delete_forever_white_24dp"
+        android:title="@string/chapters_select_cab_remove_action_title"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/download_chapters"
+        android:icon="@drawable/ic_file_download_white_24dp"
+        android:title="@string/chapters_select_cab_download_action_title"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/toggle_chapters_read_status"
+        android:icon="@drawable/ic_bookmark_white_24dp"
+        android:title="@string/chapters_select_cab_toggle_read_status_action_title"
+        app:showAsAction="ifRoom" />
+</menu>

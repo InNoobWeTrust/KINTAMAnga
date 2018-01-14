@@ -1,0 +1,230 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layoutDirection="ltr"
+    tools:targetApi="jelly_bean_mr1">
+
+    <data>
+
+        <variable
+            name="mangaBinding"
+            type="io.github.innoobwetrust.kintamanga.ui.model.MangaBinding" />
+    </data>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/color_activity_background"
+        tools:context="io.github.innoobwetrust.kintamanga.ui.reader.ReaderActivity">
+
+        <FrameLayout
+            android:id="@+id/fullscreen_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:background="@color/colorPrimaryDark" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/viewerTypeIndicatorCard"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            app:cardBackgroundColor="@color/colorPrimaryDark"
+            app:cardCornerRadius="@dimen/content_margin_medium"
+            app:cardElevation="@dimen/content_margin_medium"
+            app:contentPadding="@dimen/content_margin_medium"
+            tools:visibility="visible">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/viewerTypeIndicator"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/reader_viewer_type_indicator_description"
+                android:scaleType="fitCenter"
+                tools:srcCompat="@drawable/ic_arrow_forward_white_24dp" />
+        </androidx.cardview.widget.CardView>
+
+        <!-- This FrameLayout insets its children based on system windows using
+             android:fitsSystemWindows. -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="true">
+
+            <LinearLayout
+                android:id="@+id/fullscreen_status"
+                style="?metaButtonBarStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|center_horizontal"
+                android:orientation="vertical">
+
+                <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorPrimary"
+                    android:minHeight="?attr/actionBarSize"
+                    android:theme="@style/AppTheme.AppBarOverlay"
+                    app:popupTheme="@style/AppTheme.PopupOverlay">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/mangaTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/content_margin_medium"
+                        android:ellipsize="marquee"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:marqueeRepeatLimit="marquee_forever"
+                        android:singleLine="true"
+                        android:text="@{mangaBinding.mangaTitle}"
+                        android:textColor="@color/colorTextTitle"
+                        android:textSize="@dimen/item_title_medium_text_size" />
+                </androidx.appcompat.widget.Toolbar>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/chapterStatusAndTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/color_control_overlay"
+                    android:ellipsize="marquee"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:gravity="start|center_vertical"
+                    android:marqueeRepeatLimit="marquee_forever"
+                    android:paddingRight="@dimen/reader_chapter_status_padding"
+                    android:singleLine="true"
+                    android:text="@string/chapter_loading_text"
+                    android:textAlignment="viewStart"
+                    android:textColor="@color/colorTextSubtitle"
+                    android:textSize="@dimen/item_title_medium_text_size" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/fullscreen_content_controls"
+                style="?metaButtonBarStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center_horizontal"
+                android:background="@color/color_control_overlay"
+                android:orientation="vertical"
+                tools:ignore="UselessParent">
+
+                <LinearLayout
+                    android:id="@+id/seekControl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintLeft_toRightOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <androidx.appcompat.widget.AppCompatSeekBar
+                        android:id="@+id/pageSeekBar"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/content_margin_medium"
+                        android:layout_weight="1" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/pageIndicator"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/content_margin_medium"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorTextSubtitle"
+                        android:textSize="@dimen/item_title_small_text_size"
+                        tools:text="1/10"
+                        android:gravity="center_horizontal" />
+                </LinearLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|center_horizontal"
+                    android:background="@color/color_control_overlay"
+                    tools:ignore="UselessParent">
+
+                    <androidx.appcompat.widget.AppCompatImageButton
+                        android:id="@+id/previousChapterButton"
+                        style="?metaButtonBarButtonStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:contentDescription="@string/reader_previous_chapter_button_description"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toLeftOf="@+id/chapterSelectButton"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/ic_skip_previous_white_24dp" />
+
+                    <androidx.appcompat.widget.AppCompatImageButton
+                        android:id="@+id/chapterSelectButton"
+                        style="?metaButtonBarButtonStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:contentDescription="@string/reader_chapter_select_button_text"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toRightOf="@+id/previousChapterButton"
+                        app:layout_constraintRight_toLeftOf="@+id/chapterServerChooser"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/ic_list_white_24dp" />
+
+                    <androidx.appcompat.widget.AppCompatSpinner
+                        android:id="@+id/chapterServerChooser"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="@dimen/content_margin_medium"
+                        android:layout_marginRight="@dimen/content_margin_medium"
+                        android:popupBackground="@color/colorPrimaryDark"
+                        app:cardBackgroundColor="@android:color/transparent"
+                        app:contentPadding="@dimen/content_margin_medium"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toRightOf="@id/chapterSelectButton"
+                        app:layout_constraintRight_toLeftOf="@+id/changeViewerTypeButton"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:listitem="@layout/themed_spinner_item"
+                        tools:visibility="visible" />
+
+                    <androidx.appcompat.widget.AppCompatImageButton
+                        android:id="@+id/changeViewerTypeButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:contentDescription="@string/reader_change_viewer_type_button_description"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toRightOf="@+id/chapterServerChooser"
+                        app:layout_constraintRight_toLeftOf="@+id/nextChapterButton"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/ic_view_carousel_white_24dp" />
+
+                    <androidx.appcompat.widget.AppCompatImageButton
+                        android:id="@+id/nextChapterButton"
+                        style="?metaButtonBarButtonStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:contentDescription="@string/reader_next_chapter_button_description"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toRightOf="@+id/changeViewerTypeButton"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/ic_skip_next_white_24dp" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
+        </FrameLayout>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/chapterCommentFab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            app:layout_anchor="@id/chapterStatusAndTitle"
+            app:layout_anchorGravity="bottom|end"
+            app:srcCompat="@drawable/ic_forum_white_24dp" />
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="io.github.innoobwetrust.kintamanga.ui.main.MainActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:minHeight="?attr/actionBarSize"
+            app:popupTheme="@style/AppTheme.PopupOverlay">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <androidx.appcompat.widget.AppCompatSpinner
+                    android:id="@+id/spinnerPrimary"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/content_margin_medium"
+                    android:visibility="gone"
+                    android:layout_gravity="center_vertical"
+                    tools:listitem="@layout/themed_spinner_item"
+                    tools:visibility="visible"/>
+
+                <androidx.appcompat.widget.AppCompatSpinner
+                    android:id="@+id/spinnerSecondary"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_margin="@dimen/content_margin_medium"
+                    android:visibility="gone"
+                    tools:listitem="@layout/themed_spinner_item"
+                    tools:visibility="visible"/>
+            </LinearLayout>
+        </androidx.appcompat.widget.Toolbar>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <FrameLayout
+        android:id="@+id/content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/color_activity_background"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

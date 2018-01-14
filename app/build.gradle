@@ -1,0 +1,139 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'io.fabric'
+
+android {
+    compileSdkVersion 29
+    buildToolsVersion '28.0.3'
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
+    }
+    dataBinding {
+        enabled = true
+    }
+    defaultConfig {
+        applicationId "io.github.innoobwetrust.kintamanga"
+        minSdkVersion 16
+        targetSdkVersion 29
+        versionCode 39
+        versionName "1.3.11"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        vectorDrawables.useSupportLibrary = true
+        multiDexEnabled true
+    }
+    buildTypes {
+        debug {
+            applicationIdSuffix ".debug"
+            versionNameSuffix '-DEBUG'
+        }
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    packagingOptions {
+        exclude 'META-INF/MANIFEST.MF'
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/NOTICE'
+    }
+    sourceSets {
+        main.kotlin.srcDirs += 'src/main/kotlin'
+        main.java.srcDirs += 'src/main/java'
+    }
+}
+
+kapt {
+    correctErrorTypes = true
+}
+
+ext {
+    firebaseVersion = '16.0.9'
+    // Dependency injection
+    kodeinVersion = '4.1.0'
+    glideVersion = '4.11.0'
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    testImplementation 'junit:junit:4.13'
+    androidTestImplementation('androidx.test.espresso:espresso-core:3.2.0', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    implementation 'androidx.annotation:annotation:1.1.0'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'com.google.android.material:material:1.1.0'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    implementation 'androidx.cardview:cardview:1.0.0'
+    implementation 'androidx.vectordrawable:vectordrawable:1.1.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'androidx.multidex:multidex:2.0.1'
+
+    // Kotlin standard library
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+
+    // Crash report
+    implementation "com.google.firebase:firebase-core:$firebaseVersion"
+    implementation('com.crashlytics.sdk.android:crashlytics:2.10.1@aar') {
+        transitive = true
+    }
+
+    // Logging
+    implementation 'com.jakewharton.timber:timber:4.7.1'
+
+    // Dependency injection
+    implementation "com.github.salomonbrys.kodein:kodein:$kodeinVersion"
+    implementation "com.github.salomonbrys.kodein:kodein-conf:$kodeinVersion"
+
+    // Network
+    implementation 'com.squareup.okhttp3:okhttp:4.5.0'
+
+    // Persistent cookieJar
+    implementation 'com.github.franmontiel:PersistentCookieJar:v1.0.1'
+
+    // HTML parser
+    implementation 'org.jsoup:jsoup:1.13.1'
+
+    // Javascript engine
+    implementation 'com.squareup.duktape:duktape-android:1.3.0'
+
+    // Image loading library focused on smooth scrolling
+    implementation "com.github.bumptech.glide:glide:$glideVersion"
+    implementation "com.github.bumptech.glide:annotations:$glideVersion"
+    kapt "com.github.bumptech.glide:compiler:$glideVersion"
+    implementation "com.github.bumptech.glide:okhttp3-integration:$glideVersion@aar"
+
+    // Image view
+    implementation 'com.github.piasy:BigImageViewer:1.3.2'
+    implementation 'com.github.piasy:ProgressPieIndicator:1.3.2'
+
+    // ReactiveX
+    implementation 'io.reactivex:rxandroid:1.2.1'
+    implementation 'io.reactivex:rxjava:1.3.8'
+    implementation 'com.github.pwittchen:reactivenetwork:0.13.0'
+
+    // DragSelectRecyclerView
+    implementation 'com.afollestad:drag-select-recyclerview:1.0.0'
+    implementation 'com.afollestad:material-cab:0.1.12'
+
+    // Json
+    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'com.github.salomonbrys.kotson:kotson:2.5.0'
+
+    // Database
+    implementation 'com.pushtorefresh.storio:sqlite:1.13.0'
+}
+repositories {
+    mavenCentral()
+}
+
+apply plugin: 'com.google.gms.google-services'

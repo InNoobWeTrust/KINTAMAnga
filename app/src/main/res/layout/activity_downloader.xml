@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="io.github.innoobwetrust.kintamanga.ui.downloader.DownloaderActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:layout_constraintBottom_toTopOf="@+id/downloaderLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:popupTheme="@style/AppTheme.PopupOverlay"/>
+
+    <RelativeLayout
+        android:id="@+id/downloaderLayout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/color_activity_background"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/downloadList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="@dimen/content_margin_small"
+            android:layout_marginRight="@dimen/content_margin_small"
+            app:fastScrollEnabled="true"
+            app:fastScrollHorizontalThumbDrawable="@drawable/thumb_drawable"
+            app:fastScrollHorizontalTrackDrawable="@drawable/line_drawable"
+            app:fastScrollVerticalThumbDrawable="@drawable/thumb_drawable"
+            app:fastScrollVerticalTrackDrawable="@drawable/line_drawable"
+            app:layoutManager="LinearLayoutManager"
+            tools:listitem="@layout/holder_download"/>
+    </RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

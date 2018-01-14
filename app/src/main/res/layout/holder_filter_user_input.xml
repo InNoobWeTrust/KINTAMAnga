@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="horizontal"
+              tools:background="@color/colorPrimaryDark">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/userInputLabel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/content_margin_medium"
+        android:layout_weight="0.3"
+        android:gravity="start|center_vertical"
+        android:labelFor="@+id/userInputInput"
+        android:textAlignment="viewStart"
+        android:textColor="@color/colorTextTitle"
+        android:textSize="@dimen/item_title_small_text_size"
+        tools:text="Label"/>
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/userInputInput"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/content_margin_medium"
+        android:layout_weight="0.7"
+        android:gravity="start|center_vertical"
+        android:imeOptions="actionDone"
+        android:inputType="textPersonName"
+        android:maxLines="1"
+        android:textAlignment="viewStart"
+        android:textColor="@color/colorTextTitle"
+        android:textSize="@dimen/item_title_small_text_size"
+        tools:text="Input"/>
+</LinearLayout>

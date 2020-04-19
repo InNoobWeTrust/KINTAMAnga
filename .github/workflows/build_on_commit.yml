@@ -1,0 +1,43 @@
+name: Build on commit
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    name: Build and sign apk
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout commit
+        uses: actions/checkout@v2
+      - name: Setup signing information
+        env:
+          KEY_FILE: ${{ secrets.signingKeyBase64 }}
+        run: echo "$KEY_FILE" | openssl base64 -d > signingKey.jks
+      - name: Build release apk
+        env:
+          KEY_STORE_PWD: ${{ secrets.keyStorePassword }}
+          KEY_ALIAS: ${{ secrets.alias }}
+          KEY_PWD: ${{ secrets.keyPassword }}
+        uses: vgaidarji/android-github-actions-build@v1.0.1
+        with:
+          args: "./gradlew signingReport && ./gradlew :app:assembleRelease  --stacktrace"
+      - name: Cleanup signing information
+        run: rm signingKey.jks
+      - name: Get version code and name
+        run: |
+          echo "::set-env name=VER_CODE::$(cat app/build/outputs/apk/release/output.json | tr ',' '\n' | grep versionCode | cut -d: -f2)" && \
+                echo "::set-env name=VER_NAME::$(cat app/build/outputs/apk/release/output.json | tr ',' '\n' | grep versionName | cut -d: -f2 | tr -d \")"
+      - name: Copy release apk and mapping
+        run: |
+          mkdir -p artifacts${{ env.VER_CODE }}v${{ env.VER_NAME }} && \
+          cp -r app/build/outputs/* artifacts${{ env.VER_CODE }}v${{ env.VER_NAME }}/
+      - name: Upload artifacts ${{ env.VER_CODE }}v${{ env.VER_NAME }}
+        uses: actions/upload-artifact@v1
+        with:
+          name: artifacts${{ env.VER_CODE }}v${{ env.VER_NAME }}
+          path: artifacts${{ env.VER_CODE }}v${{ env.VER_NAME }}

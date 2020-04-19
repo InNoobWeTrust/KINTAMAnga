@@ -28,6 +28,14 @@ android {
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
     }
+    signingConfigs {
+        release {
+            storeFile file("../signingKey.jks")
+            storePassword = "$System.env.KEY_STORE_PWD"
+            keyAlias = "$System.env.KEY_ALIAS"
+            keyPassword = "$System.env.KEY_PWD"
+        }
+    }
     buildTypes {
         debug {
             applicationIdSuffix ".debug"
@@ -37,6 +45,7 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
     packagingOptions {

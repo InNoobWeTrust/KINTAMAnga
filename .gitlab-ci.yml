@@ -25,7 +25,7 @@ before_script:
   - mv tools $ANDROID_HOME/tools
   # Fix gradle 3.0 problem
   - mkdir --parents /root/.android && touch /root/.android/repositories.cfg
-  - mkdir "$ANDROID_HOME/licenses" || true
+  - mkdir $ANDROID_HOME/licenses || true
   - echo -e "\n8933bad161af4178b1185d1a37fbf41ea5269c55" > "$ANDROID_HOME/licenses/android-sdk-license"
   - echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > "$ANDROID_HOME/licenses/android-sdk-preview-license"
   - echo y | $ANDROID_HOME/tools/bin/sdkmanager "platforms;android-${ANDROID_COMPILE_SDK}"
@@ -36,10 +36,10 @@ before_script:
   - echo y | $ANDROID_HOME/tools/bin/sdkmanager "extras;google;m2repository"
   - wget --quiet --output-document=android-ndk.zip http://dl.google.com/android/repository/android-ndk-r${ANDROID_NDK_VERSION}-linux-x86_64.zip
   - unzip -q android-ndk.zip
-  - rm -fr ANDROID_NDK_HOME android-ndk.zip
-  - mv android-ndk-r${ANDROID_NDK_VERSION} ANDROID_NDK_HOME
+  - rm -fr $ANDROID_NDK_HOME android-ndk.zip
+  - mv android-ndk-r${ANDROID_NDK_VERSION} $ANDROID_NDK_HOME
   - export ANDROID_SDK_HOME=$ANDROID_HOME
-  - export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$ANDROID_HOME/android-ndk
+  - export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$ANDROID_NDK_HOME
   - chmod +x ./gradlew
 
 stages:

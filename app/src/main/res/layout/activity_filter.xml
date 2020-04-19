@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="io.github.innoobwetrust.kintamanga.ui.filter.FilterActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:gravity="start|center_vertical"
+        android:minHeight="?attr/actionBarSize"
+        android:textAlignment="viewStart"
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:layout_constraintBottom_toTopOf="@+id/filterOptions"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:popupTheme="@style/AppTheme.PopupOverlay"/>
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/filterOptions"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/color_activity_background"
+        android:scrollbarSize="@dimen/content_margin_small"
+        android:scrollbarStyle="insideOverlay"
+        android:scrollbarThumbVertical="@color/colorPrimary"
+        android:scrollbarTrackVertical="@color/colorPrimaryDark"
+        android:scrollbars="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/buttonGroup"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        app:layout_constraintVertical_weight="0.9">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/userInputRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/content_margin_small"
+                android:background="@color/cardview_dark_background"
+                android:visibility="gone"
+                app:fastScrollEnabled="true"
+                app:fastScrollHorizontalThumbDrawable="@drawable/thumb_drawable"
+                app:fastScrollHorizontalTrackDrawable="@drawable/line_drawable"
+                app:fastScrollVerticalThumbDrawable="@drawable/thumb_drawable"
+                app:fastScrollVerticalTrackDrawable="@drawable/line_drawable"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/singleChoiceRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/content_margin_small"
+                android:background="@color/cardview_dark_background"
+                android:visibility="gone"
+                app:fastScrollEnabled="true"
+                app:fastScrollHorizontalThumbDrawable="@drawable/thumb_drawable"
+                app:fastScrollHorizontalTrackDrawable="@drawable/line_drawable"
+                app:fastScrollVerticalThumbDrawable="@drawable/thumb_drawable"
+                app:fastScrollVerticalTrackDrawable="@drawable/line_drawable"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/multipleChoicesRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/content_margin_small"
+                android:background="@color/cardview_dark_background"
+                android:visibility="gone"
+                app:fastScrollEnabled="true"
+                app:fastScrollHorizontalThumbDrawable="@drawable/thumb_drawable"
+                app:fastScrollHorizontalTrackDrawable="@drawable/line_drawable"
+                app:fastScrollVerticalThumbDrawable="@drawable/thumb_drawable"
+                app:fastScrollVerticalTrackDrawable="@drawable/line_drawable"/>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <LinearLayout
+        android:id="@+id/buttonGroup"
+        style="?android:attr/buttonBarStyle"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/color_activity_background"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/filterOptions"
+        app:layout_constraintVertical_weight="0.1">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/cancelButton"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/content_margin_medium"
+            android:layout_weight="1"
+            android:background="@color/color_button_cancel"
+            android:text="@string/filter_activity_cancel_button_text"
+            android:textColor="@color/colorTextTitle"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/resetButton"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/content_margin_medium"
+            android:layout_weight="1"
+            android:background="@color/color_button_reset"
+            android:text="@string/filter_activity_reset_button_text"
+            android:textColor="@color/colorTextTitle"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/filterButton"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/content_margin_medium"
+            android:layout_weight="1"
+            android:background="@color/color_button_accept"
+            android:text="@string/filter_activity_done_button_text"
+            android:textColor="@color/colorTextTitle"/>
+    </LinearLayout>
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/progress"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:contentDescription="@string/filter_activity_loading_indicator_description"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_hourglass_empty_white_24dp"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

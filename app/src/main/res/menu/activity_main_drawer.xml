@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group
+        android:id="@+id/main_drawer_menu"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_browse"
+            android:name="Browse"
+            android:icon="@drawable/ic_cloud_white_24dp"
+            android:title="@string/navigation_drawer_menu_browse_manga_title"/>
+        <item
+            android:id="@+id/nav_collection"
+            android:name="Collection"
+            android:icon="@drawable/ic_local_library_white_24dp"
+            android:title="@string/navigation_drawer_menu_collection_title"/>
+    </group>
+
+    <group
+        android:id="@+id/main_drawer_sub_menu"
+        android:checkableBehavior="none">
+        <item
+            android:id="@+id/nav_downloader"
+            android:name="Downloads"
+            android:icon="@drawable/ic_cloud_download_white_24dp"
+            android:title="@string/navigation_drawer_menu_downloader_title"/>
+    </group>
+    <group
+        android:id="@+id/main_drawer_misc"
+        android:checkableBehavior="none">
+        <item
+        android:id="@+id/nav_share"
+        android:name="Share"
+        android:icon="@drawable/ic_menu_share"
+        android:title="@string/navigation_drawer_menu_share_title"/>
+        <item
+        android:id="@+id/nav_fanPage"
+        android:name="FanPage"
+        android:icon="@drawable/ic_menu_fanPage"
+        android:title="@string/navigation_drawer_menu_fanPage_title"/>
+    </group>
+</menu>

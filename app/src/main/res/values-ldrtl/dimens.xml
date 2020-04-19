@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- FAB menu animation -->
+    <dimen name="standard_105">-90dp</dimen>
+    <dimen name="standard_205">-180dp</dimen>
+    <dimen name="standard_305">-270dp</dimen>
+</resources>

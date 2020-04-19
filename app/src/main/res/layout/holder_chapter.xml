@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="io.github.innoobwetrust.kintamanga.model.DownloadStatus"/>
+
+        <import type="io.github.innoobwetrust.kintamanga.R"/>
+
+        <variable
+            name="chapterBinding"
+            type="io.github.innoobwetrust.kintamanga.ui.model.ChapterBinding"/>
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/chapterCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/content_margin_xSmall">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/cardview_dark_background"
+            android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/chapterOfflinePin"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center"
+                android:layout_margin="@dimen/content_margin_medium"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/manga_info_chapter_offline_pin_description"
+                android:scaleType="fitCenter"
+                app:srcCompat="@{chapterBinding.chapterDownloadStatus == DownloadStatus.DOWNLOADED ? R.drawable.ic_offline_pin_white_24dp : chapterBinding.chapterDownloadStatus == DownloadStatus.DOWNLOADING ? R.drawable.ic_cloud_download_white_24dp : R.drawable.ic_cloud_white_24dp}"
+                tools:srcCompat="@drawable/ic_cloud_white_24dp"/>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/chapterInfoLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/chapterTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/content_margin_medium"
+                    android:ellipsize="marquee"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:gravity="start|center_vertical"
+                    android:marqueeRepeatLimit="marquee_forever"
+                    android:singleLine="true"
+                    android:text="@{chapterBinding.chapterTitle}"
+                    android:textAlignment="viewStart"
+                    android:textAppearance="?attr/textAppearanceListItem"
+                    android:textColor="@{chapterBinding.chapterViewed ? @color/colorTextSubtitle : @color/colorTextTitle}"
+                    android:textSize="@dimen/item_title_small_text_size"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="Chapter ###"
+                    tools:textColor="@color/colorTextTitle"/>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/chapterDescription"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/content_margin_medium"
+                    android:ellipsize="marquee"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:gravity="start|center_vertical"
+                    android:marqueeRepeatLimit="marquee_forever"
+                    android:singleLine="true"
+                    android:text="@{chapterBinding.chapterDescription}"
+                    android:textAlignment="viewStart"
+                    android:textAppearance="?attr/textAppearanceListItem"
+                    android:textColor="@color/colorTextSubtitle"
+                    android:textSize="@dimen/item_title_small_text_size"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/chapterUpdateTime"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/chapterTitle"
+                    tools:text="#### views"/>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/chapterUpdateTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/content_margin_medium"
+                    android:ellipsize="marquee"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:gravity="start|center_vertical"
+                    android:marqueeRepeatLimit="marquee_forever"
+                    android:singleLine="true"
+                    android:text="@{chapterBinding.chapterUpdateTime}"
+                    android:textAlignment="viewStart"
+                    android:textAppearance="?attr/textAppearanceListItem"
+                    android:textColor="@color/colorTextSubtitle"
+                    android:textSize="@dimen/item_title_small_text_size"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/chapterDescription"
+                    app:layout_constraintTop_toBottomOf="@+id/chapterTitle"
+                    tools:text="## days ago"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/chapterOption"
+                android:layout_width="32dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_margin="@dimen/content_margin_medium"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/manga_info_chapter_option_button_description"
+                app:srcCompat="@drawable/ic_more_vert_white_24dp"/>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+</layout>

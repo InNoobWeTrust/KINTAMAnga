@@ -1,0 +1,94 @@
+{
+  "project_info": {
+    "project_number": "1074562684435",
+    "firebase_url": "https://kintamanga.firebaseio.com",
+    "project_id": "kintamanga",
+    "storage_bucket": "kintamanga.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1074562684435:android:0feca4c64a5a212e",
+        "android_client_info": {
+          "package_name": "io.github.innoobwetrust.kintamanga"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1074562684435-rk9040gjhqc0bqfhlhq4hf1s8mavlcja.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.github.innoobwetrust.kintamanga",
+            "certificate_hash": "3c219e2d477e0583aebcfc6ac0ca84e7a92f7467"
+          }
+        },
+        {
+          "client_id": "1074562684435-qs91qjk0ntr39cfe50m5ngsuifucd5t9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.github.innoobwetrust.kintamanga",
+            "certificate_hash": "f96cbd839e4960597f1c02dc643a6f76b09e1ee1"
+          }
+        },
+        {
+          "client_id": "1074562684435-47uauikijdgge2u0dc6on11j14vms1rd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAd1lLhb_E9uHcOSdIiui7wE4r6mf-nPA4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1074562684435-47uauikijdgge2u0dc6on11j14vms1rd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1074562684435:android:deee3f2e6dacdfb5",
+        "android_client_info": {
+          "package_name": "io.github.innoobwetrust.kintamanga.debug"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1074562684435-47uauikijdgge2u0dc6on11j14vms1rd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAd1lLhb_E9uHcOSdIiui7wE4r6mf-nPA4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

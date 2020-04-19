@@ -1,0 +1,147 @@
+<resources>
+    <string name="app_name" translatable="false">KINTAMAnga</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <!-- Navigation drawer -->
+    <string name="navigation_drawer_app_icon_description">App Icon</string>
+    <string name="navigation_drawer_app_title">@string/app_name</string>
+    <string name="navigation_drawer_menu_browse_manga_title">Browse</string>
+    <string name="navigation_drawer_menu_collection_title">Collection</string>
+    <string name="navigation_drawer_menu_downloader_title">Downloads</string>
+    <string name="navigation_drawer_menu_tools_title">Tools</string>
+    <string name="navigation_drawer_menu_share_title">Share</string>
+    <string name="navigation_drawer_menu_share_text">Try this manga app, should not disappoint you:\n</string>
+    <string name="navigation_drawer_menu_fanPage_title">Get on board, pirates!</string>
+    <string name="navigation_drawer_menu_donate_title">Send Devil Fruit!</string>
+    <string name="navigation_drawer_menu_send_title">Send</string>
+    <string-array name="manga_group_list">
+        <item>Favorited</item>
+        <item>Downloaded</item>
+        <item>All</item>
+    </string-array>
+    <string name="source_filter_all">All</string>
+
+    <!-- Main Activity -->
+    <string name="action_filter">Filter/Search</string>
+    <string name="refresh_manga_list_empty">Empty list! If you are not searching, maybe the server is experiencing problem(s)</string>
+    <string name="refresh_manga_list_error">Error refreshing manga list!</string>
+    <string name="refresh_database_manga_list_error">Error loading manga list from database!!!</string>
+
+    <!-- Manga Information -->
+    <string name="cover_image_description">Cover Image</string>
+    <string name="last_update_icon_description">Update Time</string>
+    <string name="alternative_title_icon_description">Alternative Title</string>
+    <string name="artists_icon_description">Artists</string>
+    <string name="authors_icon_description">Authors</string>
+    <string name="teams_icon_description">Teams</string>
+    <string name="status_icon_description">Status</string>
+    <string name="types_icon_description">Types</string>
+    <string name="genres_icon_description">Genres</string>
+    <string name="warning_icon_description">Warning</string>
+    <string name="description_icon_description">Description</string>
+    <string name="expand_header_icon_description">Expand Information</string>
+
+    <!-- FilterActivity -->
+    <string name="filter_activity_title">Filter/Search</string>
+    <string name="filter_activity_loading_indicator_description">Loading…</string>
+    <string name="filter_activity_cancel_button_text">Cancel</string>
+    <string name="filter_activity_reset_button_text">Reset</string>
+    <string name="filter_activity_done_button_text">Done</string>
+    <string name="filter_activity_load_filter_error_text">Error loading filter data!</string>
+
+    <!-- MangaInfoActivity -->
+    <string name="manga_info_activity_title">@string/app_name</string>
+    <string name="chapter_list_title">Chapters</string>
+    <string name="chapters_select_cab_title">%1$d</string>
+    <string name="chapters_select_cab_select_all_action_title">Select all</string>
+    <string name="chapters_select_cab_invert_selection_action_title">Invert selection</string>
+    <string name="chapters_select_cab_remove_action_title">Remove selected</string>
+    <string name="chapters_select_cab_download_action_title">Download selected</string>
+    <string name="chapters_select_cab_toggle_read_status_action_title">Toggle read/unread</string>
+    <string name="manga_info_update_database_problem_text">Database problem, please reload this screen and try again!</string>
+    <string name="manga_info_loading_indicator_description">Loading…</string>
+    <string name="manga_info_chapter_offline_pin_description">Offline pin</string>
+    <string name="manga_info_chapter_option_button_description">Options</string>
+    <string name="manga_info_refresh_failed_text">Failed to refresh manga information</string>
+    <string name="manga_info_refresh_error_text">Error refreshing manga information!!!</string>
+    <string name="chapter_item_option_download">Download</string>
+    <string name="chapter_item_option_delete">Delete</string>
+    <string name="chapter_item_option_toggle_view_status">Read/Unread</string>
+    <string name="manga_share_chooser_title">Share using</string>
+    <string name="download_chapters_dialog_title">Download selected chapters</string>
+    <string name="download_chapters_dialog_message">Download selected chapters?</string>
+    <string name="download_chapters_dialog_positive_button_text">Yes</string>
+    <string name="download_chapters_dialog_negative_button_text">Cancel</string>
+    <string name="delete_chapters_dialog_title">Delete selected chapters</string>
+    <string name="delete_chapters_dialog_message">Are you sure to delete selected chapters?</string>
+    <string name="delete_chapters_dialog_positive_button_text">Yes</string>
+    <string name="delete_chapters_dialog_negative_button_text">Cancel</string>
+    <string name="clean_manga_dialog_title">Clean manga</string>
+    <string name="clean_manga_dialog_message">This will remove any pending download and all downloaded chapters.\n\nThis will also check and remove manga from collection if manga is neither favorited nor downloaded.\n\nAre you sure to clean this manga?</string>
+    <string name="clean_manga_dialog_positive_button_text">Yes</string>
+    <string name="clean_manga_dialog_negative_button_text">Cancel</string>
+    <string name="clean_manga_progress_dialog_message">Cleaning, please wait…</string>
+    <string name="observe_download_failed_text">Error tracking downloads for this manga</string>
+    <string name="download_request_prepare_failed_text">Error saving chapter(s) information before downloads</string>
+    <string name="remove_download_failed_text">Error removing downloads for this manga</string>
+    <string name="remove_downloaded_chapter_failed_text">Error removing downloaded chapter(s)</string>
+
+    <!-- ReaderActivity -->
+    <string name="reader_activity_title">Reader</string>
+    <string name="chapter_loading_text">Loading, please wait…</string>
+    <string name="chapter_load_failed_text">Failed to load chapter</string>
+    <string name="chapter_load_empty_text">Chapter has no image! Web page error!</string>
+    <string name="chapter_load_error_text">Chapter load error!</string>
+    <string name="reader_server_picker_text">Server #%1$d</string>
+    <string name="reader_reload_image_button_text">Reload</string>
+    <string name="reader_chapter_select_button_text">Select chapter</string>
+    <string name="reader_chapter_loading_indicator_description">Loading…</string>
+    <string name="reader_viewer_type_indicator_description">Viewer type</string>
+    <string name="reader_change_viewer_type_button_description">Change viewer type</string>
+    <string name="reader_previous_chapter_button_description">Previous chapter</string>
+    <string name="reader_next_chapter_button_description">Next chapter</string>
+    <string name="reader_page_indicator_text">%1$d/%2$d</string>
+
+    <!-- DownloaderActivity -->
+    <string name="downloader_activity_title">Downloads</string>
+    <string name="downloader_option_start">Start downloader</string>
+    <string name="downloader_option_pause">Pause downloader</string>
+    <string name="downloader_option_stop">Stop downloader</string>
+    <string name="downloader_option_remove_all">Remove all</string>
+    <string name="downloader_option_use_mobile_data">Toggle mobile data restriction</string>
+    <string name="download_item_option_resume">Resume</string>
+    <string name="download_item_option_stop">Stop</string>
+    <string name="download_item_option_remove">Remove</string>
+
+    <!-- Download Service -->
+    <string name="download_service_error">Error occur when checking connectivity. Please restart the app!</string>
+
+    <!-- Download Notification -->
+    <string name="download_notifier_downloader_title">Download</string>
+    <string name="download_notifier_title_error">Error</string>
+    <string name="download_notifier_unknown_error">An unexpected error occurred while downloading</string>
+    <string name="download_notifier_page_error">A page is missing in directory</string>
+    <string name="download_notifier_page_ready_error">A page is not loaded</string>
+    <string name="download_notifier_metered_network">Stopped in metered network</string>
+    <string name="download_notifier_no_network">Network unavailable</string>
+    <string name="chapter_downloading_progress">%1$d/%2$d</string>
+    <string name="download_notifier_download_paused">Download paused</string>
+    <string name="download_notifier_download_stopped">Download stopped</string>
+    <string name="download_notifier_download_complete">Download complete</string>
+    <string name="chapter_paused">Chapter download paused</string>
+    <string name="chapter_stopped">Chapter download stopped</string>
+
+    <!-- Notification actions -->
+    <string name="action_resume">Resume</string>
+    <string name="action_pause">Pause</string>
+    <string name="action_stop">Stop</string>
+    <string name="action_clear">Clear</string>
+
+    <!-- NotificationReceiver -->
+    <string name="chapter_error">Error</string>
+
+    <!-- The class name to the ScrollingChildBehavior required for AppBarLayout -->
+    <string name="appbar_scrolling_view_behavior" translatable="false">com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior</string>
+</resources>

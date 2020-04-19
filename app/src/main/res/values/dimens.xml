@@ -1,0 +1,29 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <!--<dimen name="activity_horizontal_margin">16dp</dimen>-->
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="nav_header_vertical_spacing">16dp</dimen>
+    <dimen name="nav_header_height">160dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+    <!--<dimen name="text_margin">16dp</dimen>-->
+    <!--<dimen name="app_bar_height">180dp</dimen>-->
+
+    <!-- Text sizes and content margins-->
+    <dimen name="item_title_small_text_size">14sp</dimen>
+    <dimen name="item_spinner_dropdown_text_size">16sp</dimen>
+    <dimen name="item_title_medium_text_size">18sp</dimen>
+    <dimen name="item_title_large_text_size">22sp</dimen>
+    <!--<dimen name="content_no_margin">0dp</dimen>-->
+    <dimen name="content_margin_xSmall">2dp</dimen>
+    <dimen name="content_margin_small">4dp</dimen>
+    <dimen name="content_margin_medium">8dp</dimen>
+    <dimen name="content_margin_xMedium">12dp</dimen>
+    <!--<dimen name="content_margin_large">16dp</dimen>-->
+    <dimen name="content_margin_xLarge">24dp</dimen>
+    <dimen name="reader_chapter_status_padding">52dp</dimen>
+
+    <!-- FAB menu animation -->
+    <dimen name="standard_105">90dp</dimen>
+    <dimen name="standard_205">180dp</dimen>
+    <dimen name="standard_305">270dp</dimen>
+</resources>

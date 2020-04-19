@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="download"
+            type="io.github.innoobwetrust.kintamanga.model.Download"/>
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/content_margin_xSmall">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/cardview_dark_background">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/downloadMangaImage"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:imageUriCenterCrop="@{download.manga.mangaThumbnailUri}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintDimensionRatio="w,1:1.142"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:srcCompat="@drawable/ic_broken_image_white_24dp"/>
+
+            <LinearLayout
+                android:id="@+id/downloadInfo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/downloadMangaImage"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/downloadProgress"
+                android:orientation="horizontal">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/mangaTitle"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/content_margin_medium"
+                        android:ellipsize="marquee"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:gravity="start|center_vertical"
+                        android:marqueeRepeatLimit="marquee_forever"
+                        android:singleLine="true"
+                        android:text="@{download.manga.mangaTitle}"
+                        android:textAlignment="viewStart"
+                        android:textColor="@color/colorTextSubtitle"
+                        android:textSize="@dimen/item_title_small_text_size"
+                        app:layout_constraintBottom_toTopOf="@+id/chapterTitle"
+                        app:layout_constraintEnd_toStartOf="@+id/downloadStatus"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="Manga title"/>
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/downloadStatus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/content_margin_medium"
+                        android:ellipsize="marquee"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:gravity="start|center_vertical"
+                        android:marqueeRepeatLimit="marquee_forever"
+                        android:singleLine="true"
+                        android:text="@{download.downloadStatus.name}"
+                        android:textAlignment="viewStart"
+                        android:textColor="@color/colorTextSubtitle"
+                        android:textSize="@dimen/item_title_small_text_size"
+                        app:layout_constraintBottom_toTopOf="@+id/downloadProgressText"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/mangaTitle"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="DOWNLOADING"/>
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/chapterTitle"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/content_margin_medium"
+                        android:ellipsize="marquee"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:gravity="start|center_vertical"
+                        android:marqueeRepeatLimit="marquee_forever"
+                        android:singleLine="true"
+                        android:text="@{download.chapter.chapterTitle}"
+                        android:textAlignment="viewStart"
+                        android:textColor="@color/colorTextTitle"
+                        android:textSize="@dimen/item_title_medium_text_size"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/downloadProgressText"
+                        app:layout_constraintHorizontal_weight="0.7"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/mangaTitle"
+                        tools:text="Chapter Title"/>
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/downloadProgressText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_margin="@dimen/content_margin_medium"
+                        android:ellipsize="marquee"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:gravity="start|center_vertical"
+                        android:marqueeRepeatLimit="marquee_forever"
+                        android:singleLine="true"
+                        android:text="@{download.downloadedImages + `/` + (null == download.pages ? `?` : download.pages.size())}"
+                        android:textAlignment="viewStart"
+                        android:textColor="@color/colorTextSubtitle"
+                        android:textSize="@dimen/item_title_small_text_size"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_weight="0.3"
+                        app:layout_constraintStart_toEndOf="@+id/chapterTitle"
+                        app:layout_constraintTop_toBottomOf="@+id/downloadStatus"
+                        tools:text="0/10"/>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/downloadOption"
+                    android:layout_width="32dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_margin="@dimen/content_margin_medium"
+                    android:background="@android:color/transparent"
+                    app:srcCompat="@drawable/ic_more_vert_white_24dp"/>
+            </LinearLayout>
+
+            <androidx.core.widget.ContentLoadingProgressBar
+                android:id="@+id/downloadProgress"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/content_margin_medium"
+                android:max="@{null == download.pages ? 1 : download.pages.size()}"
+                android:progress="@{download.downloadedImages}"
+                app:layout_constraintTop_toBottomOf="@+id/downloadInfo"
+                app:layout_constraintStart_toEndOf="@+id/downloadMangaImage"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                tools:max="100"
+                tools:progress="70"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+</layout>

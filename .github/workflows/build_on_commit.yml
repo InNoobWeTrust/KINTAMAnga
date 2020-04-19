@@ -1,0 +1,39 @@
+name: Build on commit
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+    
+jobs:
+  build:
+    name: Build and sign apk 
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout commit
+        uses: actions/checkout@v2
+      - name: Build apk
+        uses: vgaidarji/android-github-actions-build@v1.0.1
+        with:
+          args: "./gradlew assemble --stacktrace"
+      - name: Sign apk
+        uses: r0adkll/sign-android-release@v1
+        with:
+          releaseDirectory: app/build/outputs/apk/release
+          signingKeyBase64: ${{ secrets.signingKeyBase64 }}
+          alias: ${{ secrets.alias }}
+          keyStorePassword: ${{ secrets.keyStorePassword }}
+          keyPassword: ${{ secrets.keyPassword }}
+      - name: Copy release apk and mapping
+        run: |
+          mkdir -p artifacts && \
+          cp app/build/outputs/releaseapk/release/app-release.apk artifacts && \
+          cp app/build/outputs/releaseapk/release/output.json artifacts && \
+          cp app/build/outputs/mapping/release/mapping.txt artifacts
+      - name: upload artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          name: artifacts
+          path: artifacts

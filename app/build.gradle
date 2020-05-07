@@ -65,7 +65,7 @@ kapt {
 }
 
 ext {
-    firebaseVersion = '16.0.9'
+    firebaseVersion = '17.4.0'
     // Dependency injection
     kodeinVersion = '4.1.0'
     glideVersion = '4.11.0'

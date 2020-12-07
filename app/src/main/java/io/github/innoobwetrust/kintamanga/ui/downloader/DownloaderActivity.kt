@@ -8,9 +8,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.salomonbrys.kodein.conf.KodeinGlobalAware
 import com.github.salomonbrys.kodein.instance
 import io.github.innoobwetrust.kintamanga.R
+import io.github.innoobwetrust.kintamanga.databinding.ActivityDownloaderBinding
 import io.github.innoobwetrust.kintamanga.download.Downloader
 import io.github.innoobwetrust.kintamanga.service.DownloadService
-import kotlinx.android.synthetic.main.activity_downloader.*
 import rx.android.schedulers.AndroidSchedulers
 import rx.subscriptions.CompositeSubscription
 
@@ -24,16 +24,18 @@ class DownloaderActivity : AppCompatActivity(), KodeinGlobalAware {
      * Whether the download queue is running or not.
      */
     private var isRunning: Boolean = false
+    private lateinit var binding: ActivityDownloaderBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_downloader)
-        setSupportActionBar(toolbar)
+        binding = ActivityDownloaderBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setSupportActionBar(binding.toolbar)
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
             setDisplayShowHomeEnabled(true)
         }
-        downloadList?.apply {
+        binding.downloadList.apply {
             layoutManager = LinearLayoutManager(this@DownloaderActivity)
             adapter = DownloadAdapter(this@DownloaderActivity)
         }
@@ -44,7 +46,7 @@ class DownloaderActivity : AppCompatActivity(), KodeinGlobalAware {
         )
         subscriptions.add(instance<Downloader>().queue.getUpdatedObservable()
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { downloadList?.adapter?.notifyDataSetChanged() }
+                .subscribe { binding.downloadList.adapter?.notifyDataSetChanged() }
         )
     }
 
@@ -67,8 +69,7 @@ class DownloaderActivity : AppCompatActivity(), KodeinGlobalAware {
         return true
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        if (null == item) return false
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.downloader_start -> {
                 DownloadService.start(this)
@@ -87,7 +88,7 @@ class DownloaderActivity : AppCompatActivity(), KodeinGlobalAware {
                     R.id.downloader_stop,
                     R.id.downloader_remove_all
             ) -> return true.also {
-                downloadList?.adapter?.notifyDataSetChanged()
+                binding.downloadList.adapter?.notifyDataSetChanged()
             }
         }
         return false
@@ -99,7 +100,7 @@ class DownloaderActivity : AppCompatActivity(), KodeinGlobalAware {
     }
 
     override fun onStop() {
-        downloadList?.adapter = null
+        binding.downloadList.adapter = null
         super.onStop()
     }
 
@@ -116,6 +117,6 @@ class DownloaderActivity : AppCompatActivity(), KodeinGlobalAware {
     private fun onQueueStatusChange(running: Boolean) {
         isRunning = running
         invalidateOptionsMenu()
-        downloadList?.adapter?.notifyDataSetChanged()
+        binding.downloadList.adapter?.notifyDataSetChanged()
     }
 }

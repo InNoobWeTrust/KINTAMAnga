@@ -32,7 +32,7 @@ object SourceManager {
     fun normalizeUri(uri: Uri): String? {
         val sourceName = findFirstSourceNameForHost(host = uri.host) ?: return null
         val source = getSourceByName(sourceName = sourceName) ?: return null
-        val uriString = uri.toString().let { if (!it.isBlank() && it.last() != '/') "$it/" else it }
+        val uriString = uri.toString().let { if (it.isNotBlank() && it.last() != '/') "$it/" else it }
         return uriString.replaceFirst(source.aliasRootUri, source.rootUri)
     }
 

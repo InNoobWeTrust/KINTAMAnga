@@ -6,17 +6,16 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.crashlytics.android.Crashlytics
 import com.github.salomonbrys.kodein.conf.KodeinGlobalAware
 import com.github.salomonbrys.kodein.instance
 import com.github.salomonbrys.kotson.fromJson
 import com.github.salomonbrys.kotson.typedToJson
 import com.google.gson.Gson
 import io.github.innoobwetrust.kintamanga.R
+import io.github.innoobwetrust.kintamanga.databinding.ActivityFilterBinding
 import io.github.innoobwetrust.kintamanga.source.model.SourceSegment
 import io.github.innoobwetrust.kintamanga.ui.main.list.MangaListFragment
 import io.github.innoobwetrust.kintamanga.util.extension.toast
-import kotlinx.android.synthetic.main.activity_filter.*
 import rx.Subscription
 import timber.log.Timber
 
@@ -32,11 +31,13 @@ class FilterActivity : AppCompatActivity(), KodeinGlobalAware, FilterNetworkLoad
     private lateinit var userInput: MutableMap<String, String>
     private lateinit var singleChoice: MutableMap<String, String>
     private lateinit var multipleChoices: MutableSet<Pair<String, String>>
+    private lateinit var binding: ActivityFilterBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_filter)
-        setSupportActionBar(toolbar)
+        binding = ActivityFilterBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setSupportActionBar(binding.toolbar)
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
             setDisplayShowHomeEnabled(true)
@@ -46,19 +47,19 @@ class FilterActivity : AppCompatActivity(), KodeinGlobalAware, FilterNetworkLoad
         userInput = gson.fromJson(
                 intent.getStringExtra(
                         MangaListFragment.Companion.Intents.USER_INPUT.key
-                )
+                ) ?: ""
         )
         singleChoice =
                 gson.fromJson(
                         intent.getStringExtra(
                                 MangaListFragment.Companion.Intents.SINGLE_CHOICE.key
-                        )
+                        ) ?: ""
                 )
         multipleChoices =
                 gson.fromJson(
                         intent.getStringExtra(
                                 MangaListFragment.Companion.Intents.MULTIPLE_CHOICES.key
-                        )
+                        ) ?: ""
                 )
     }
 
@@ -87,9 +88,9 @@ class FilterActivity : AppCompatActivity(), KodeinGlobalAware, FilterNetworkLoad
     }
 
     private val onRefreshedFilterData: (Boolean) -> Unit = { success ->
-        progress?.visibility = View.GONE
+        binding.progress.visibility = View.GONE
         if (success) {
-            filterButton?.setOnClickListener {
+            binding.filterButton.setOnClickListener {
                 val resultIntent = Intent()
                         .putExtra(
                                 MangaListFragment.Companion.Intents.USER_INPUT.key,
@@ -107,8 +108,8 @@ class FilterActivity : AppCompatActivity(), KodeinGlobalAware, FilterNetworkLoad
                 finish()
             }
             if (mangaSegment.filterByUserInput.isNotEmpty()) {
-                userInputRecyclerView?.visibility = View.VISIBLE
-                userInputRecyclerView?.apply {
+                binding.userInputRecyclerView.visibility = View.VISIBLE
+                binding.userInputRecyclerView.apply {
                     layoutManager = LinearLayoutManager(this@FilterActivity)
                     adapter = FilterUserInputAdapter(
                             userInput = this@FilterActivity.userInput,
@@ -118,11 +119,11 @@ class FilterActivity : AppCompatActivity(), KodeinGlobalAware, FilterNetworkLoad
                             mangaSegment.filterRequiredDefaultUserInput
                     )
                 }
-                userInputRecyclerView?.isNestedScrollingEnabled = false
+                binding.userInputRecyclerView.isNestedScrollingEnabled = false
             }
             if (mangaSegment.filterBySingleChoice.isNotEmpty()) {
-                singleChoiceRecyclerView?.visibility = View.VISIBLE
-                singleChoiceRecyclerView?.apply {
+                binding.singleChoiceRecyclerView.visibility = View.VISIBLE
+                binding.singleChoiceRecyclerView.apply {
                     layoutManager = LinearLayoutManager(this@FilterActivity)
                     adapter = FilterSingleChoiceAdapter(
                             singleChoice = this@FilterActivity.singleChoice,
@@ -132,11 +133,11 @@ class FilterActivity : AppCompatActivity(), KodeinGlobalAware, FilterNetworkLoad
                             mangaSegment.filterRequiredDefaultSingleChoice
                     )
                 }
-                singleChoiceRecyclerView?.isNestedScrollingEnabled = false
+                binding.singleChoiceRecyclerView.isNestedScrollingEnabled = false
             }
             if (mangaSegment.filterByMultipleChoices.isNotEmpty()) {
-                multipleChoicesRecyclerView?.visibility = View.VISIBLE
-                multipleChoicesRecyclerView?.apply {
+                binding.multipleChoicesRecyclerView.visibility = View.VISIBLE
+                binding.multipleChoicesRecyclerView.apply {
                     layoutManager = LinearLayoutManager(this@FilterActivity)
                     adapter = FilterMultipleChoicesAdapter(
                             multipleChoices = multipleChoices,
@@ -144,39 +145,38 @@ class FilterActivity : AppCompatActivity(), KodeinGlobalAware, FilterNetworkLoad
                             filterByMultipleChoices = mangaSegment.filterByMultipleChoices
                     )
                 }
-                multipleChoicesRecyclerView?.isNestedScrollingEnabled = false
+                binding.multipleChoicesRecyclerView.isNestedScrollingEnabled = false
             }
         } else {
-            filterButton?.visibility = View.GONE
+            binding.filterButton.visibility = View.GONE
             toast(R.string.filter_activity_load_filter_error_text)
         }
-        resetButton?.setOnClickListener {
-            userInputRecyclerView?.apply {
+        binding.resetButton.setOnClickListener {
+            binding.userInputRecyclerView.apply {
                 mangaSegment.filterByUserInput.forEachIndexed { index, _ ->
                     (findViewHolderForAdapterPosition(index)
                             as? FilterUserInputAdapter.ViewHolder)?.reset()
                 }
             }
-            singleChoiceRecyclerView?.apply {
+            binding.singleChoiceRecyclerView.apply {
                 mangaSegment.filterBySingleChoice.toList().forEachIndexed { index, _ ->
                     (findViewHolderForAdapterPosition(index)
                             as? FilterSingleChoiceAdapter.ViewHolder)?.reset()
                 }
             }
-            multipleChoicesRecyclerView?.apply {
+            binding.multipleChoicesRecyclerView.apply {
                 mangaSegment.filterByMultipleChoices.toList().forEachIndexed { index, _ ->
                     (findViewHolderForAdapterPosition(index)
                             as? FilterMultipleChoicesAdapter.ViewHolder)?.reset()
                 }
             }
         }
-        cancelButton?.setOnClickListener { onBackPressed() }
-        progress?.visibility = View.GONE
+        binding.cancelButton.setOnClickListener { onBackPressed() }
+        binding.progress.visibility = View.GONE
     }
 
     private val onRefreshError: (Throwable) -> Unit = { error ->
         toast(R.string.filter_activity_load_filter_error_text)
         Timber.e(error)
-        Crashlytics.logException(error)
     }
 }

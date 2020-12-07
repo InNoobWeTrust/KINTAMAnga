@@ -8,7 +8,6 @@ import android.net.NetworkInfo.State.DISCONNECTED
 import android.os.IBinder
 import android.os.PowerManager
 import android.widget.Toast
-import com.crashlytics.android.Crashlytics
 import com.github.pwittchen.reactivenetwork.library.Connectivity
 import com.github.pwittchen.reactivenetwork.library.ReactiveNetwork
 import com.github.salomonbrys.kodein.conf.KodeinGlobalAware
@@ -123,7 +122,6 @@ class DownloadService : Service(), KodeinGlobalAware {
                 }, { error ->
                     toast(R.string.download_service_error, Toast.LENGTH_LONG)
                     Timber.e(error)
-                    Crashlytics.logException(error)
                     stopSelf()
                 })
         )

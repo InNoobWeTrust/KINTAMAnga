@@ -11,6 +11,6 @@ object HocVienTruyenTranhChapterInfoProcessor : DomChapterInfoProcessor {
     override var imagesUriSelector: String = ".manga-container>img"
     override var imagesUriAttribute: String = "src"
 
-    override fun headers(): Headers = instance()
+    override fun headers(): Headers = instance<Headers>().newBuilder().add("Referer", source.rootUri).build()
     override fun cacheControl(): CacheControl = instance()
 }

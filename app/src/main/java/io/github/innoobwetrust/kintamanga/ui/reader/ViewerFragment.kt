@@ -1,16 +1,24 @@
 package io.github.innoobwetrust.kintamanga.ui.reader
 
 import android.content.Context
+import android.net.Uri
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
-import io.github.innoobwetrust.kintamanga.R
+import com.bumptech.glide.Glide
+import com.bumptech.glide.ListPreloader
+import com.bumptech.glide.RequestBuilder
+import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader
+import com.bumptech.glide.load.model.Headers
+import com.bumptech.glide.load.model.LazyHeaders
+import com.bumptech.glide.util.ViewPreloadSizeProvider
+import io.github.innoobwetrust.kintamanga.databinding.FragmentImageViewerBinding
+import io.github.innoobwetrust.kintamanga.model.Page
 import io.github.innoobwetrust.kintamanga.ui.model.ChapterBinding
-import kotlinx.android.synthetic.main.fragment_image_viewer.*
-import kotlinx.android.synthetic.main.fragment_image_viewer.view.*
+import java.io.File
 import kotlin.math.abs
 
 class ViewerFragment : Fragment(), ReaderActivityListener {
@@ -24,8 +32,18 @@ class ViewerFragment : Fragment(), ReaderActivityListener {
         get() = mReader?.mangaBinding?.mangaViewer
     private val chapterBinding: ChapterBinding?
         get() = mReader?.chapterBinding
-    val serverIndex: Int?
-        get() = mReader?.serverIndex
+    private val glideHeaders: Headers?
+        get() = (activity as? ReaderActivity)
+                ?.chapterInfoProcessor
+                ?.headers()
+                ?.fold(
+                        LazyHeaders.Builder(),
+                        { builder: LazyHeaders.Builder, pair: Pair<String, String> ->
+                            builder.addHeader(pair.first, pair.second)
+                        })
+                ?.build()
+    val serverIndex: Int
+        get() = mReader?.serverIndex ?: 0
     private val pagerSnapHelper: PagerSnapHelper by lazy {
         object : PagerSnapHelper() {
             override fun findTargetSnapPosition(
@@ -115,33 +133,12 @@ class ViewerFragment : Fragment(), ReaderActivityListener {
         }
     }
 
+    private lateinit var binding: FragmentImageViewerBinding
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        return inflateView(inflater = inflater, container = container)
-    }
-
-    override fun onResume() {
-        super.onResume()
-        syncPosition(newPosition = null)
-    }
-
-    override fun onDestroyView() {
-        imageViewerRecyclerView?.adapter = null
-        super.onDestroyView()
-        System.gc()
-    }
-
-    override fun onDetach() {
-        mReader = null
-        imageViewerRecyclerView?.adapter = null
-        super.onDetach()
-        System.gc()
-    }
-
-    private fun inflateView(inflater: LayoutInflater?, container: ViewGroup?): View? {
+                              savedInstanceState: Bundle?): View {
         // Always re-create RecyclerVew to sync position, this won't require much computation
-        val view = inflater!!.inflate(R.layout.fragment_image_viewer, container, false)
-        view.imageViewerRecyclerView?.apply {
+        binding = FragmentImageViewerBinding.inflate(inflater, container, false)
+        binding.imageViewerRecyclerView.apply {
             setHasFixedSize(true)
             layoutManager = when (mViewerType) {
                 ViewerTypes.PAGER_HORIZONTAL_LEFT_TO_RIGHT.ordinal ->
@@ -158,6 +155,7 @@ class ViewerFragment : Fragment(), ReaderActivityListener {
             adapter = ImageViewerAdapter(
                     viewer = this@ViewerFragment,
                     chapterBinding = chapterBinding!!,
+                    glideHeaders = glideHeaders,
                     viewerType = ViewerTypes.values()[mViewerType ?: 0]
             )
             // Sync position
@@ -179,9 +177,47 @@ class ViewerFragment : Fragment(), ReaderActivityListener {
                         }
                     }
                 })
+                addOnScrollListener(RecyclerViewPreloader(Glide.with(this), object : ListPreloader.PreloadModelProvider<Page> {
+                    override fun getPreloadItems(position: Int): List<Page> {
+                        return chapterBinding?.chapterPages?.get(position)?.run { listOf(this) }
+                                ?: emptyList()
+                    }
+
+                    override fun getPreloadRequestBuilder(page: Page): RequestBuilder<File> {
+                        return Glide.with(this@ViewerFragment).downloadOnly().load(when {
+                            page.imageFileUri.isNotBlank() -> {
+                                Uri.parse(page.imageFileUri)
+                            }
+                            page.imageUrls[this@ViewerFragment.serverIndex].isNotBlank() -> {
+                                Uri.parse(page.imageUrls[this@ViewerFragment.serverIndex])
+                            }
+                            else -> {
+                                Uri.EMPTY
+                            }
+                        })
+                    }
+                }, ViewPreloadSizeProvider(), 10))
             }
         }
-        return view
+        return binding.root
+    }
+
+    override fun onResume() {
+        super.onResume()
+        syncPosition(newPosition = null)
+    }
+
+    override fun onDestroyView() {
+        binding.imageViewerRecyclerView.adapter = null
+        super.onDestroyView()
+        System.gc()
+    }
+
+    override fun onDetach() {
+        mReader = null
+        binding.imageViewerRecyclerView.adapter = null
+        super.onDetach()
+        System.gc()
     }
 
     fun syncPosition(newPosition: Int?, progressFeedback: Boolean = true) {
@@ -197,13 +233,13 @@ class ViewerFragment : Fragment(), ReaderActivityListener {
                 mReader?.onViewerPageChanged(newPagePosition = it.chapterLastPageRead)
             }
             if (pagesJump == 1)
-                imageViewerRecyclerView?.smoothScrollToPosition(it.chapterLastPageRead)
+                binding.imageViewerRecyclerView.smoothScrollToPosition(it.chapterLastPageRead)
             else
-                imageViewerRecyclerView?.scrollToPosition(it.chapterLastPageRead)
+                binding.imageViewerRecyclerView.scrollToPosition(it.chapterLastPageRead)
         }
     }
 
     override fun onImageLoaded(position: Int) {
-        imageViewerRecyclerView?.adapter?.notifyItemChanged(position)
+        binding.imageViewerRecyclerView.adapter?.notifyItemChanged(position)
     }
 }

@@ -1,8 +1,8 @@
 package io.github.innoobwetrust.kintamanga.download
 
 import android.content.Context
+import android.net.Uri
 import android.webkit.MimeTypeMap
-import com.crashlytics.android.Crashlytics
 import com.github.salomonbrys.kodein.conf.KodeinGlobalAware
 import com.github.salomonbrys.kodein.instance
 import io.github.innoobwetrust.kintamanga.database.DatabaseHelper
@@ -18,6 +18,7 @@ import io.github.innoobwetrust.kintamanga.util.ImageConverter
 import io.github.innoobwetrust.kintamanga.util.RetryWithDelay
 import io.github.innoobwetrust.kintamanga.util.Storage
 import io.github.innoobwetrust.kintamanga.util.extension.*
+import okhttp3.Headers
 import okhttp3.OkHttpClient
 import okhttp3.Response
 import rx.Observable
@@ -85,7 +86,6 @@ class Downloader(private val context: Context) : KodeinGlobalAware {
                         },
                         { error ->
                             Timber.e(error)
-                            Crashlytics.logException(error)
                         })
     }
 
@@ -131,7 +131,6 @@ class Downloader(private val context: Context) : KodeinGlobalAware {
                         { error ->
                             DownloadService.stop(context)
                             Timber.e(error)
-                            Crashlytics.logException(error)
                             notifier.onError(error.message)
                         }
                 )
@@ -335,7 +334,7 @@ class Downloader(private val context: Context) : KodeinGlobalAware {
                         .getChapterInfoProcessorForSourceName(download.manga.mangaSourceName)
                         ?.fetchPageList(download.chapter)
                         ?: throw Exception("Error retrieving processor or fetching page list with source:" +
-                        " ${download.manga.mangaSourceName}")
+                                " ${download.manga.mangaSourceName}")
             }.doOnNext { pages ->
                 if (pages.isEmpty()) {
                     throw Exception("Page list is empty")
@@ -359,9 +358,18 @@ class Downloader(private val context: Context) : KodeinGlobalAware {
                 .flatMap { Observable.from(it) }
                 // Start downloading images, consider we can have downloaded images already
                 .concatMap { page ->
+                    // Adding custom headers to requests
+                    val headers = SourceManager
+                            .getChapterInfoProcessorForSourceName(download.manga.mangaSourceName)?.headers()
                     // Allow pausing individual download by changing the download's status
                     if (DownloadStatus.DOWNLOADING == download.downloadStatus)
-                        getOrDownloadImage(page, download, tmpDir)
+                        getOrDownloadImage(
+                                page,
+                                download,
+                                tmpDir,
+                                SourceManager.getChapterInfoProcessorForSourceName(download.manga.mangaSourceName)?.headers()
+                                        ?: instance()
+                        )
                     else
                         Observable.just(page)
                 }
@@ -388,7 +396,7 @@ class Downloader(private val context: Context) : KodeinGlobalAware {
      * @param download the download of the page.
      * @param tmpDir the temporary directory of the download.
      */
-    private fun getOrDownloadImage(page: Page, download: Download, tmpDir: File): Observable<Page> {
+    private fun getOrDownloadImage(page: Page, download: Download, tmpDir: File, headers: Headers): Observable<Page> {
         // If the image URL is empty, do nothing
         if (page.imageUrls.all { it.isBlank() })
             return Observable.just(page)
@@ -406,12 +414,12 @@ class Downloader(private val context: Context) : KodeinGlobalAware {
         val pageObservable = if (null != imageFile)
             Observable.just(imageFile)
         else
-            downloadImage(page, tmpDir, filename)
+            downloadImage(page, tmpDir, filename, headers)
 
         return pageObservable
                 // When the image is ready, set image path, progress (just in case) and status
                 .doOnNext { file ->
-                    page.imageFileUri = "file://" + file.absolutePath
+                    page.imageFileUri = Uri.fromFile(file).toString()
                     download.downloadedImages++
                     page.pageStatus = DownloadStatus.DOWNLOADED
                 }
@@ -430,13 +438,13 @@ class Downloader(private val context: Context) : KodeinGlobalAware {
      * @param tmpDir the temporary directory of the download.
      * @param filename the filename of the image.
      */
-    private fun downloadImage(page: Page, tmpDir: File, filename: String): Observable<File> {
+    private fun downloadImage(page: Page, tmpDir: File, filename: String, headers: Headers): Observable<File> {
         page.pageStatus = DownloadStatus.DOWNLOADING
         return Observable
                 .from(
                         page.imageUrls.map {
                             instance<OkHttpClient>("chapter")
-                                    .newCall(GET(it))
+                                    .newCall(GET(it, headers = headers))
                                     .asObservableSuccess()
                         }
                 )
@@ -453,8 +461,8 @@ class Downloader(private val context: Context) : KodeinGlobalAware {
                                     }
                                     var extension = getImageExtension(response, file)
                                     if (ImageConverter.convertRequiredImageTypes
-                                            .map { imgType -> imgType.substringAfter("image/") }
-                                            .contains(extension)) {
+                                                    .map { imgType -> imgType.substringAfter("image/") }
+                                                    .contains(extension)) {
                                         extension = "png"
                                         ImageConverter.convertToSupportedImage(file)
                                     }
@@ -484,7 +492,7 @@ class Downloader(private val context: Context) : KodeinGlobalAware {
     private fun getImageExtension(response: Response, file: File): String {
         // Read content type if available.
         val mime = response.body?.contentType()?.let { ct -> "${ct.type}/${ct.subtype}" }
-                // Else guess from the uri.
+        // Else guess from the uri.
                 ?: context.contentResolver.getType(file.getUriCompat(context))
                 // Else read magic numbers.
                 ?: ImageConverter.findImageMime { file.inputStream() }

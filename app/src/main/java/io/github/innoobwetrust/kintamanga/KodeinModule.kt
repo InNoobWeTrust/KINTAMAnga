@@ -11,6 +11,7 @@ import com.franmontiel.persistentcookiejar.cache.SetCookieCache
 import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor
 import com.github.salomonbrys.kodein.Kodein
 import com.github.salomonbrys.kodein.bind
+import com.github.salomonbrys.kodein.factory
 import com.github.salomonbrys.kodein.instance
 import com.github.salomonbrys.kodein.singleton
 import com.google.gson.Gson
@@ -21,6 +22,7 @@ import io.github.innoobwetrust.kintamanga.util.Storage
 import okhttp3.Cache
 import okhttp3.CacheControl
 import okhttp3.Headers
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import java.io.File
 import java.util.concurrent.TimeUnit
@@ -73,6 +75,13 @@ val okHttpModule = Kodein.Module {
             add("User-Agent", "Mozilla/5.0 (Windows NT 6.3; WOW64)")
         }.build()
     }
+    bind<Interceptor>("headers") with factory { headers: Headers -> Interceptor { chain ->
+        chain.proceed(chain.request().run {
+            val withCustomHeaders = newBuilder()
+            headers.forEach{ withCustomHeaders.header(it.first, it.second) }
+            withCustomHeaders.build()
+        })
+    }}
     bind<CacheControl>() with singleton {
         CacheControl.Builder()
                 .maxAge(5, TimeUnit.MINUTES)

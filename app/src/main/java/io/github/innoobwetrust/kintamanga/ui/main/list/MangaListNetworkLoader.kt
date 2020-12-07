@@ -91,7 +91,7 @@ interface MangaListNetworkLoader {
                     .parallelMap { elementInfo ->
                         Observable.fromCallable { networkLoadMissingMangaInfo(elementInfo) }
                                 .onErrorReturn { MangaBinding() }
-                                .filter { !it.mangaThumbnailUri.isBlank() }
+                                .filter { it.mangaThumbnailUri.isNotBlank() }
                     }
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())

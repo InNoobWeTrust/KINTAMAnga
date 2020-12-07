@@ -10,7 +10,7 @@ class Page(
         var chapterIndex: Int = -1,
         val pageIndex: Int,
         var imageUrls: List<String> = listOf(""),
-        var imageFileUri: String = ""
+        var imageFileUri: String = "",
 ) : BaseObservable(), Serializable {
 
     init {
@@ -18,14 +18,17 @@ class Page(
     }
 
     @get:Bindable
-    @Transient @Volatile var pageStatus: DownloadStatus = DownloadStatus.NOT_DOWNLOADED
+    @Transient
+    @Volatile
+    var pageStatus: DownloadStatus = DownloadStatus.NOT_DOWNLOADED
         set(value) {
             field = value
             statusSubject?.onNext(value)
             notifyPropertyChanged(BR.pageStatus)
         }
 
-    @Transient private var statusSubject: PublishSubject<DownloadStatus>? = null
+    @Transient
+    private var statusSubject: PublishSubject<DownloadStatus>? = null
 
     fun setStatusSubject(subject: PublishSubject<DownloadStatus>?) {
         this.statusSubject = subject

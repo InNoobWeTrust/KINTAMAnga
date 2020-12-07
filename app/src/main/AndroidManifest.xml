@@ -13,6 +13,7 @@
     <application
         android:name="io.github.innoobwetrust.kintamanga.KINTAMAngaApp"
         android:usesCleartextTraffic="true"
+        android:requestLegacyExternalStorage="true"
         android:allowBackup="true"
         android:fullBackupContent="@xml/backup_descriptor"
         android:hardwareAccelerated="true"
@@ -22,9 +23,7 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:targetApi="m">
-        <!-- Firebase -->
-        <meta-data android:name="firebase_performance_logcat_enabled" android:value="true" />
+        tools:targetApi="q">
 
         <!-- KINTAMAnga -->
         <activity

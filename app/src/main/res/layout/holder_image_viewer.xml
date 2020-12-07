@@ -10,54 +10,9 @@
     android:minHeight="100dp"
     tools:background="@color/color_activity_background">
 
-    <com.github.piasy.biv.view.BigImageView
+    <com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
         android:id="@+id/chapterImage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:initScaleType="auto"
-        app:optimizeDisplay="false"
         app:tileBackgroundColor="@color/cardview_dark_background"/>
-
-    <View
-        android:id="@+id/touchOverlay"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@android:color/transparent"/>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/failureView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:background="@color/cardview_dark_background"
-        android:visibility="gone"
-        tools:visibility="visible">
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/failureImage"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintDimensionRatio="h,1:1"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_broken_image_white_24dp"
-            tools:src="@drawable/ic_broken_image_white_24dp"/>
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/reloadImageButton"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/content_margin_medium"
-            android:background="@color/colorPrimaryTransparent"
-            android:text="@string/reader_reload_image_button_text"
-            android:textColor="@color/colorTextTitle"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="1"/>
-    </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

@@ -15,11 +15,10 @@ import com.github.salomonbrys.kodein.instance
 import com.google.android.material.navigation.NavigationView
 import io.github.innoobwetrust.kintamanga.KINTAMAngaPreferences
 import io.github.innoobwetrust.kintamanga.R
+import io.github.innoobwetrust.kintamanga.databinding.ActivityMainBinding
 import io.github.innoobwetrust.kintamanga.ui.downloader.DownloaderActivity
 import io.github.innoobwetrust.kintamanga.ui.main.favorite.FavoriteFragment
 import io.github.innoobwetrust.kintamanga.ui.main.list.MangaListFragment
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.content_main.*
 
 class MainActivity :
         AppCompatActivity(),
@@ -36,22 +35,24 @@ class MainActivity :
     }
 
     private var currentFragmentIndex: Int = 0
+    lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        setSupportActionBar(toolbar)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setSupportActionBar(binding.contentMain.toolbar)
 
         val toggle = ActionBarDrawerToggle(
                 this,
-                drawer_layout,
-                toolbar,
+                binding.drawerLayout,
+                binding.contentMain.toolbar,
                 R.string.navigation_drawer_open,
                 R.string.navigation_drawer_close
         )
-        drawer_layout.addDrawerListener(toggle)
+        binding.drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
-        nav_view.setNavigationItemSelectedListener(this)
+        binding.navView.setNavigationItemSelectedListener(this)
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -64,7 +65,7 @@ class MainActivity :
         } else {
             currentFragmentIndex = savedInstanceState.getInt(Preferences.CURRENT_FRAGMENT.key)
         }
-        nav_view.menu.getItem(currentFragmentIndex).isChecked = true
+        binding.navView.menu.getItem(currentFragmentIndex).isChecked = true
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -73,8 +74,8 @@ class MainActivity :
     }
 
     override fun onBackPressed() {
-        if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
-            drawer_layout.closeDrawer(GravityCompat.START)
+        if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            binding.drawerLayout.closeDrawer(GravityCompat.START)
         } else {
             finish()
         }
@@ -117,12 +118,12 @@ class MainActivity :
                 startActivity(fanPageIntent)
             }
         }
-        drawer_layout.closeDrawer(GravityCompat.START)
+        binding.drawerLayout.closeDrawer(GravityCompat.START)
         return selected
     }
 
     private fun switchToFragmentIndex(fragmentIndex: Int): Boolean {
-        return if (fragmentIndex in 0 until fragmentTagList.size &&
+        return if (fragmentIndex in fragmentTagList.indices &&
                 fragmentIndex != currentFragmentIndex) {
             currentFragmentIndex = fragmentIndex
             doFragmentTransaction()
@@ -131,20 +132,19 @@ class MainActivity :
     }
 
     private fun doFragmentTransaction() {
-        val toBeAttachedFragment: Fragment? =
-                supportFragmentManager.findFragmentByTag(fragmentTagList[currentFragmentIndex])
+        val toBeAttachedFragment: Fragment =
+                supportFragmentManager.findFragmentByTag(fragmentTagList[currentFragmentIndex]) ?: when (currentFragmentIndex) {
+                    1 -> FavoriteFragment.newInstance()
+                    else -> MangaListFragment.newInstance()
+                } as Fragment
         supportFragmentManager
                 .beginTransaction()
                 .replace(
                         R.id.content,
-                        toBeAttachedFragment ?: when (currentFragmentIndex) {
-                            0 -> MangaListFragment.newInstance()
-                            1 -> FavoriteFragment.newInstance()
-                            else -> MangaListFragment.newInstance()
-                        } as Fragment,
+                        toBeAttachedFragment,
                         fragmentTagList[currentFragmentIndex]
                 ).commit()
-        spinnerPrimary?.visibility = View.GONE
-        spinnerSecondary?.visibility = View.GONE
+        binding.contentMain.spinnerPrimary.visibility = View.GONE
+        binding.contentMain.spinnerSecondary.visibility = View.GONE
     }
 }

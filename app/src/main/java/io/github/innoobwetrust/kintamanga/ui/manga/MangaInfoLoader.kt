@@ -1,6 +1,5 @@
 package io.github.innoobwetrust.kintamanga.ui.manga
 
-import com.crashlytics.android.Crashlytics
 import com.github.salomonbrys.kodein.conf.KodeinGlobalAware
 import com.github.salomonbrys.kodein.instance
 import com.pushtorefresh.storio.sqlite.operations.get.PreparedGetListOfObjects
@@ -62,7 +61,6 @@ interface MangaInfoLoader : KodeinGlobalAware {
             .fromCallable { putMangaDb() }
             .doOnError {
                 Timber.e(it)
-                Crashlytics.logException(it)
             }
             .subscribeOn(Schedulers.io())
 
@@ -76,7 +74,6 @@ interface MangaInfoLoader : KodeinGlobalAware {
                     }
                     .doOnError {
                         Timber.e(it)
-                        Crashlytics.logException(it)
                     }
                     .subscribeOn(Schedulers.io())
 
@@ -140,7 +137,6 @@ interface MangaInfoLoader : KodeinGlobalAware {
                     }
                     .doOnError {
                         Timber.e(it)
-                        Crashlytics.logException(it)
                     }
                     .subscribeOn(Schedulers.io())
 
@@ -149,7 +145,6 @@ interface MangaInfoLoader : KodeinGlobalAware {
                     .flatMap { saveChapters() }
                     .doOnError {
                         Timber.e(it)
-                        Crashlytics.logException(it)
                     }
                     .subscribeOn(Schedulers.io())
 
@@ -187,7 +182,6 @@ interface MangaInfoLoader : KodeinGlobalAware {
             }
             .doOnError {
                 Timber.e(it)
-                Crashlytics.logException(it)
             }
             .subscribeOn(Schedulers.io())
 
@@ -223,7 +217,6 @@ interface MangaInfoLoader : KodeinGlobalAware {
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnError {
                     Timber.e(it)
-                    Crashlytics.logException(it)
                 }
                 .subscribe(
                         { download -> onDownloadStatusChange(download) },
@@ -244,7 +237,6 @@ interface MangaInfoLoader : KodeinGlobalAware {
         saveMangaObservable
                 .doOnError {
                     Timber.e(it)
-                    Crashlytics.logException(it)
                 }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -281,7 +273,6 @@ interface MangaInfoLoader : KodeinGlobalAware {
                 }
                 .doOnError {
                     Timber.e(it)
-                    Crashlytics.logException(it)
                 }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -310,7 +301,6 @@ interface MangaInfoLoader : KodeinGlobalAware {
                 }
                 .doOnError {
                     Timber.e(it)
-                    Crashlytics.logException(it)
                 }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

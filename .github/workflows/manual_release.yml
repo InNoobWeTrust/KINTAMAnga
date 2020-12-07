@@ -1,25 +1,25 @@
-name: Build on commit
+name: Manual release
 
 on:
-  push:
-    branches: [ master ]
-  pull_request:
+  workflow_dispatch:
     branches: [ master ]
 
 jobs:
-  build:
-    name: Build and sign apk
+  build_and_release:
+    name: Build and release
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v2
+      - name: Set version code to release
+        run: |
+          echo "$(grep 'version=' gradle.properties | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')" |\
+          xargs -I % sed -i 's/^version=.*$/version=%/' gradle.properties
       - name: Create version and tag
         id: tag_version
         run: |
           echo "::set-output name=new_tag::v$(grep 'version=' gradle.properties | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')" &&
-          echo "::set-output name=new_version::$(grep 'version=' gradle.properties | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')" &&
-          echo "::set-output name=full_tag::v$(grep 'version=' gradle.properties | grep -oE '[0-9]+\.[0-9]+\.[0-9]+.*')" &&
-          echo "::set-output name=snapshot_date::$(date -Iseconds)"
+          echo "::set-output name=new_version::$(grep 'version=' gradle.properties | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')"
       - name: Setup signing information
         env:
           KEY_FILE: ${{ secrets.signingKeyBase64 }}
@@ -48,20 +48,18 @@ jobs:
       - name: Export APK
         uses: actions/upload-artifact@v1
         with:
-          name: app-release-${{ steps.tag_version.outputs.new_tag }}.apk
+          name: KINTAMAnga-${{ steps.tag_version.outputs.new_tag }}.apk
           path: app/build/outputs/apk/release/app-release.apk
       - name: Create a GitHub release
-        if: ${{ github.event_name == 'push' }}
         id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.tag_version.outputs.full_tag }}
-          release_name: Nightly ${{ steps.tag_version.outputs.snapshot_date }} ${{ steps.tag_version.outputs.full_tag }}
-          prerelease: true
+          tag_name: ${{ steps.tag_version.outputs.new_tag }}
+          release_name: Release ${{ steps.tag_version.outputs.new_tag }}
+          prerelease: false
       - name: Upload artifacts
-        if: ${{ github.event_name == 'push' }}
         id: upload-artifacts
         uses: actions/upload-release-asset@v1
         env:
@@ -72,7 +70,6 @@ jobs:
           asset_name: artifacts_${{ steps.tag_version.outputs.new_tag }}.zip
           asset_content_type: application/zip
       - name: Upload APK
-        if: ${{ github.event_name == 'push' }}
         id: upload-apk
         uses: actions/upload-release-asset@v1
         env:
@@ -80,5 +77,6 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./app/build/outputs/apk/release/app-release.apk
-          asset_name: app-release-${{ steps.tag_version.outputs.new_tag }}.apk
+          asset_name: KINTAMAnga-${{ steps.tag_version.outputs.new_tag }}.apk
           asset_content_type: application/zip
+

@@ -34,7 +34,7 @@ object AllSegment : DomSegment {
     override var isUsable: Boolean = true
 
     override var isRequestByGET: Boolean = true
-    override fun headers(): Headers = instance()
+    override fun headers(): Headers = instance<Headers>().newBuilder().add("Referer", source.rootUri).build()
     override fun cacheControl(): CacheControl = instance()
 
     override var urisSelector: String = ".table.table-hover>tbody>tr>td:nth-child(1)>a"

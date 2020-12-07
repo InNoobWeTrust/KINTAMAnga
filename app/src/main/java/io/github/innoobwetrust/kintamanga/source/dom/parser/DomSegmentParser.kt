@@ -50,12 +50,12 @@ interface DomSegmentParser {
     }
 
     fun previousPageUriFromDocument(document: Document): String =
-            if (!previousPageSelector.isBlank())
+            if (previousPageSelector.isNotBlank())
                 document.parseUri(selector = previousPageSelector, attribute = "href")
             else ""
 
     fun nextPageUriFromDocument(document: Document): String =
-            if (!nextPageSelector.isBlank())
+            if (nextPageSelector.isNotBlank())
                 document.parseUri(selector = nextPageSelector, attribute = "href")
             else ""
 }

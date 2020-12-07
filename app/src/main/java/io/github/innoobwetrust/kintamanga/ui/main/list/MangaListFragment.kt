@@ -8,22 +8,21 @@ import android.os.Bundle
 import android.view.*
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import androidx.appcompat.widget.AppCompatSpinner
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.okhttp3.OkHttpUrlLoader
 import com.bumptech.glide.load.model.GlideUrl
-import com.crashlytics.android.Crashlytics
 import com.github.salomonbrys.kodein.conf.KodeinGlobalAware
+import com.github.salomonbrys.kodein.factory
 import com.github.salomonbrys.kodein.instance
 import com.github.salomonbrys.kotson.fromJson
 import com.github.salomonbrys.kotson.typedToJson
 import com.google.gson.Gson
 import io.github.innoobwetrust.kintamanga.KINTAMAngaPreferences
 import io.github.innoobwetrust.kintamanga.R
+import io.github.innoobwetrust.kintamanga.databinding.FragmentMangaListBinding
 import io.github.innoobwetrust.kintamanga.source.SourceManager
 import io.github.innoobwetrust.kintamanga.source.model.CatalogPage
 import io.github.innoobwetrust.kintamanga.source.model.CatalogPages
@@ -37,9 +36,8 @@ import io.github.innoobwetrust.kintamanga.ui.main.MangaListTypes
 import io.github.innoobwetrust.kintamanga.ui.manga.MangaInfoActivity
 import io.github.innoobwetrust.kintamanga.ui.model.MangaBinding
 import io.github.innoobwetrust.kintamanga.util.extension.toast
-import kotlinx.android.synthetic.main.content_main.*
-import kotlinx.android.synthetic.main.fragment_manga_list.*
-import kotlinx.android.synthetic.main.fragment_manga_list.view.*
+import okhttp3.Headers
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import rx.Single
 import rx.Subscription
@@ -115,7 +113,6 @@ class MangaListFragment :
                 )!!
             } catch (e: Exception) {
                 Timber.e(e, "source: $mangaSourceName, index: $segmentIndex")
-                Crashlytics.logException(e)
                 throw e
             }
         }
@@ -145,12 +142,13 @@ class MangaListFragment :
         setHasOptionsMenu(true)
     }
 
+    private lateinit var binding: FragmentMangaListBinding
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_manga_list, container, false)
-        setupMangaListView(view = view)
+                              savedInstanceState: Bundle?): View {
+        binding = FragmentMangaListBinding.inflate(inflater, container, false)
+        setupMangaListView()
         setupToolbar()
-        return view
+        return binding.root
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -187,89 +185,85 @@ class MangaListFragment :
 
     override fun onResume() {
         super.onResume()
-        this.activity?.let {
+        activity?.let {
             Glide.get(it.applicationContext).registry.replace(
                     GlideUrl::class.java,
                     InputStream::class.java,
-                    OkHttpUrlLoader.Factory(instance<OkHttpClient>("cover"))
+                    OkHttpUrlLoader.Factory(
+                        instance<OkHttpClient>("cover")
+                            .newBuilder()
+                            .addInterceptor(factory<Headers, Interceptor>("headers")(mangaInfoProcessor.headers()))
+                            .build()
+                    )
             )
         }
     }
 
     override fun onPause() {
         disposeAllLoaderDisposables()
-        swipeRefreshLayout?.isRefreshing = false
+        binding.swipeRefreshLayout.isRefreshing = false
         super.onPause()
     }
 
     override fun onDestroy() {
-        listElementInfos?.adapter = null
+        binding.listElementInfos.adapter = null
         System.gc()
         super.onDestroy()
     }
 
-    private fun setupMangaListView(view: View?) {
-        if (view?.swipeRefreshLayout is SwipeRefreshLayout) {
-            view.swipeRefreshLayout.setOnRefreshListener {
-                backgroundRefresh(
-                        onRefreshedCatalogPage = onRefreshedCatalogPage,
-                        onRefreshError = onRefreshError
-                )
-            }
-            when (activity?.resources?.configuration?.orientation) {
-                Configuration.ORIENTATION_PORTRAIT ->
-                    view.listElementInfos.layoutManager =
-                            GridLayoutManager(
-                                    view.listElementInfos.context,
-                                    mColumnCount - 2,
-                                    RecyclerView.VERTICAL,
-                                    false
-                            )
-                Configuration.ORIENTATION_LANDSCAPE ->
-                    view.listElementInfos.layoutManager =
-                            GridLayoutManager(
-                                    view.listElementInfos.context,
-                                    mColumnCount,
-                                    RecyclerView.VERTICAL,
-                                    false
-                            )
-            }
-            view.listElementInfos.adapter = MangaListAdapter(
-                    catalogPages = catalogPages,
-                    listType = mListType,
-                    elementInfoInteractionListener = this
+    private fun setupMangaListView() {
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            backgroundRefresh(
+                    onRefreshedCatalogPage = onRefreshedCatalogPage,
+                    onRefreshError = onRefreshError
             )
         }
+        binding.listElementInfos.layoutManager = if (activity?.resources?.configuration?.orientation == Configuration.ORIENTATION_LANDSCAPE)
+            GridLayoutManager(
+                    binding.listElementInfos.context,
+                    mColumnCount,
+                    RecyclerView.VERTICAL,
+                    false
+            )
+        else
+            GridLayoutManager(
+                    binding.listElementInfos.context,
+                    mColumnCount - 2,
+                    RecyclerView.VERTICAL,
+                    false
+            )
+        binding.listElementInfos.adapter = MangaListAdapter(
+                catalogPages = catalogPages,
+                listType = mListType,
+                elementInfoInteractionListener = this
+        )
     }
 
     private fun setupToolbar() {
-        (activity as? MainActivity)?.supportActionBar?.title = null
-        if (activity?.spinnerPrimary is AppCompatSpinner &&
-                activity?.spinnerSecondary is AppCompatSpinner) {
-            if (sourceSpinnerAdapter != activity?.spinnerPrimary?.adapter ||
-                    segmentSpinnerAdapter != activity?.spinnerSecondary?.adapter)
-                setupSpinners()
+        (activity as? MainActivity)?.let {
+            it.supportActionBar?.title = null
+            if (sourceSpinnerAdapter != it.binding.contentMain.spinnerPrimary.adapter ||
+                    segmentSpinnerAdapter != it.binding.contentMain.spinnerSecondary.adapter)
+                setupSpinners(it)
             else {
-                activity?.spinnerPrimary?.visibility = View.VISIBLE
-                activity?.spinnerSecondary?.visibility = View.VISIBLE
+                it.binding.contentMain.spinnerPrimary.visibility = View.VISIBLE
+                it.binding.contentMain.spinnerSecondary.visibility = View.VISIBLE
             }
         }
     }
 
-    private fun setupSpinners() {
-        if (activity?.spinnerPrimary is AppCompatSpinner) {
-            val spinnerSource = activity!!.spinnerPrimary
-            spinnerSource.adapter = sourceSpinnerAdapter
-            spinnerSource.onItemSelectedListener = sourceSpinnerOnItemSelectedListener
-            val sourcePosition = SourceManager.sourceNameList.indexOf(mangaSourceName)
-            if (-1 < sourcePosition) spinnerSource?.setSelection(sourcePosition)
-            spinnerSource.visibility = View.VISIBLE
-        }
+    private fun setupSpinners(mainActivity: MainActivity) {
+        val spinnerSource = mainActivity.binding.contentMain.spinnerPrimary
+        spinnerSource.adapter = sourceSpinnerAdapter
+        spinnerSource.onItemSelectedListener = sourceSpinnerOnItemSelectedListener
+        val sourcePosition = SourceManager.sourceNameList.indexOf(mangaSourceName)
+        if (-1 < sourcePosition) spinnerSource.setSelection(sourcePosition)
+        spinnerSource.visibility = View.VISIBLE
     }
 
     private fun setupSegmentSpinner(resetIndex: Boolean) {
-        if (activity?.spinnerSecondary is AppCompatSpinner) {
-            val spinnerSegment = activity!!.spinnerSecondary
+        (activity as? MainActivity)?.let {
+            val spinnerSegment = it.binding.contentMain.spinnerSecondary
             spinnerSegment.adapter = segmentSpinnerAdapter
             if (resetIndex) segmentIndex = 0
             spinnerSegment.onItemSelectedListener = segmentSpinnerOnItemSelectedListener
@@ -301,7 +295,7 @@ class MangaListFragment :
                     position: Int,
                     id: Long
             ) {
-                swipeRefreshLayout?.isRefreshing = false
+                binding.swipeRefreshLayout.isRefreshing = false
                 disposeAllLoaderDisposables()
                 val newSourceName =
                         SourceManager.sourceNameList.getOrElse(
@@ -363,7 +357,7 @@ class MangaListFragment :
                                     mangaSegment.filterByUserInput.isNotEmpty()) {
                                 requestFilter()
                             } else {
-                                swipeRefreshLayout?.isRefreshing = true
+                                binding.swipeRefreshLayout.isRefreshing = true
                                 backgroundRefresh(
                                         onRefreshedCatalogPage = onRefreshedCatalogPage,
                                         onRefreshError = onRefreshError
@@ -422,10 +416,10 @@ class MangaListFragment :
 
     private val onRefreshedCatalogPage: (CatalogPage) -> Unit = { catalogPage ->
         catalogPages.setup(catalogPage = catalogPage)
-        listElementInfos?.adapter?.notifyDataSetChanged()
-        listElementInfos?.scrollToPosition(0)
+        binding.listElementInfos.adapter?.notifyDataSetChanged()
+        binding.listElementInfos.scrollToPosition(0)
         activity?.invalidateOptionsMenu()
-        swipeRefreshLayout?.isRefreshing = false
+        binding.swipeRefreshLayout.isRefreshing = false
         if (catalogPage.elementInfos.isEmpty())
             context?.toast(R.string.refresh_manga_list_empty)
         else
@@ -436,7 +430,7 @@ class MangaListFragment :
     }
 
     private val onRefreshError: (Throwable) -> Unit = { error ->
-        swipeRefreshLayout?.isRefreshing = false
+        binding.swipeRefreshLayout.isRefreshing = false
         context?.toast(R.string.refresh_manga_list_error)
         Timber.e(error)
     }
@@ -444,9 +438,9 @@ class MangaListFragment :
     private val onNextCatalogPage: (CatalogPage?) -> Unit = { catalogPage ->
         if (null != catalogPage) {
             catalogPages.appendNextCatalogPage(catalogPage = catalogPage)
-            listElementInfos?.adapter?.notifyDataSetChanged()
+            binding.listElementInfos.adapter?.notifyDataSetChanged()
         }
-        swipeRefreshLayout?.isRefreshing = false
+        binding.swipeRefreshLayout.isRefreshing = false
         backgroundLoadMissingInfo(
                 onNextMissingMangaInfoLoaded = onNextMissingMangaInfoLoaded,
                 onMissingMangaInfoError = onMissingMangaInfoError
@@ -460,7 +454,7 @@ class MangaListFragment :
                 ?.let {
                     it.itemThumbnailUri = info.mangaThumbnailUri
                     it.itemDescription = info.mangaDescription
-                    listElementInfos?.adapter
+                    binding.listElementInfos.adapter
                             ?.notifyItemChanged(catalogPages.elementInfos.indexOf(it))
                 }
     }
@@ -480,8 +474,8 @@ class MangaListFragment :
             )
             saveFilter()
             catalogPages.elementInfos.clear()
-            listElementInfos?.adapter?.notifyDataSetChanged()
-            swipeRefreshLayout?.isRefreshing = true
+            binding.listElementInfos.adapter?.notifyDataSetChanged()
+            binding.swipeRefreshLayout.isRefreshing = true
             backgroundRefresh(
                     onRefreshedCatalogPage = onRefreshedCatalogPage,
                     onRefreshError = onRefreshError
@@ -509,7 +503,7 @@ class MangaListFragment :
 
     override fun onRequestMoreElement() {
         if (loadNextPageDisposable?.isUnsubscribed == false) return
-        if (swipeRefreshLayout?.isRefreshing == true) return
+        if (binding.swipeRefreshLayout.isRefreshing) return
         // Start loading next page when remaining manga is 5 or less
         val catalogHasNextPage = try {
             catalogPages.hasNextPage()
@@ -517,7 +511,7 @@ class MangaListFragment :
             false
         }
         if (catalogHasNextPage) {
-            swipeRefreshLayout?.isRefreshing = true
+            binding.swipeRefreshLayout.isRefreshing = true
             backgroundLoadNextCatalogPage(
                     onNextCatalogPage = onNextCatalogPage,
                     onNextCatalogPageError = onNextCatalogPageError

@@ -1,6 +1,5 @@
 package io.github.innoobwetrust.kintamanga.util.extension
 
-import com.crashlytics.android.Crashlytics
 import timber.log.Timber
 import java.net.URI
 import java.net.URL
@@ -17,7 +16,6 @@ val String.uriString: String
         }
     } catch (e: Exception) {
         Timber.e("$this: $e")
-        Crashlytics.logException(e)
         ""
     }
 
@@ -32,7 +30,6 @@ fun String.uriString(context: URL): String = if (isBlank()) "" else try {
     }
 } catch (e: Exception) {
     Timber.e("$this: $e")
-    Crashlytics.logException(e)
     ""
 }
 

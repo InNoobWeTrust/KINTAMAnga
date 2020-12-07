@@ -1,5 +1,6 @@
 package io.github.innoobwetrust.kintamanga.download
 
+import android.net.Uri
 import io.github.innoobwetrust.kintamanga.model.DownloadStatus
 import io.github.innoobwetrust.kintamanga.model.Page
 import io.github.innoobwetrust.kintamanga.ui.model.MangaBinding
@@ -168,11 +169,11 @@ object DownloadProvider {
             val images = findChapterImages(chapterDir = chapterDir)
                     ?: throw Exception("Error occur when indexing offline chapter's images")
             val tempMutableList = mutableListOf<String>()
-            var maxNum = images.maxBy { it.first }?.first ?: 1
+            var maxNum = images.maxByOrNull { it.first }?.first ?: 1
             if (maxNum < 1) maxNum = 1
             (1..maxNum).asSequence().map { index -> images.find { it.first == index } }.forEach {
                 if (null != it)
-                    tempMutableList.add("file://" + it.second.absolutePath)
+                    tempMutableList.add(Uri.fromFile(it.second).toString())
                 else
                     tempMutableList.add("")
             }

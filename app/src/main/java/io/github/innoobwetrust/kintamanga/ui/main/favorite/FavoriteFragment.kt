@@ -8,19 +8,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import androidx.appcompat.widget.AppCompatSpinner
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.okhttp3.OkHttpUrlLoader
 import com.bumptech.glide.load.model.GlideUrl
-import com.crashlytics.android.Crashlytics
 import com.github.salomonbrys.kodein.conf.KodeinGlobalAware
 import com.github.salomonbrys.kodein.instance
 import io.github.innoobwetrust.kintamanga.R
 import io.github.innoobwetrust.kintamanga.database.DatabaseHelper
 import io.github.innoobwetrust.kintamanga.database.model.MangaDb
+import io.github.innoobwetrust.kintamanga.databinding.FragmentMangaListBinding
 import io.github.innoobwetrust.kintamanga.source.SourceManager
 import io.github.innoobwetrust.kintamanga.source.model.CatalogPages
 import io.github.innoobwetrust.kintamanga.ui.main.ElementInfoInteractionListener
@@ -31,9 +30,6 @@ import io.github.innoobwetrust.kintamanga.ui.manga.MangaInfoActivity
 import io.github.innoobwetrust.kintamanga.ui.model.ElementInfo
 import io.github.innoobwetrust.kintamanga.ui.model.MangaBinding
 import io.github.innoobwetrust.kintamanga.util.extension.toast
-import kotlinx.android.synthetic.main.content_main.*
-import kotlinx.android.synthetic.main.fragment_manga_list.*
-import kotlinx.android.synthetic.main.fragment_manga_list.view.*
 import okhttp3.OkHttpClient
 import rx.Subscription
 import timber.log.Timber
@@ -58,12 +54,14 @@ class FavoriteFragment :
 
     override var sourceNameFilter: String? = null
 
+    private lateinit var binding: FragmentMangaListBinding
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_manga_list, container, false)
-        setupFavoriteListView(view = view)
+                              savedInstanceState: Bundle?): View {
+        binding = FragmentMangaListBinding.inflate(inflater, container, false)
+        setupFavoriteListView()
         setupToolbar()
-        return view
+        return binding.root
     }
 
     override fun onResume() {
@@ -72,6 +70,7 @@ class FavoriteFragment :
             Glide.get(it.applicationContext).registry.replace(
                     GlideUrl::class.java,
                     InputStream::class.java,
+                    // FIXME: custom headers per source
                     OkHttpUrlLoader.Factory(instance<OkHttpClient>("cover"))
             )
         }
@@ -79,67 +78,59 @@ class FavoriteFragment :
 
     override fun onPause() {
         disposeAllLoaderDisposables()
-        swipeRefreshLayout?.isRefreshing = false
+        binding.swipeRefreshLayout.isRefreshing = false
         super.onPause()
     }
 
     override fun onDestroy() {
-        listElementInfos?.adapter = null
+        binding.listElementInfos.adapter = null
         System.gc()
         super.onDestroy()
     }
 
-    private fun setupFavoriteListView(view: View) {
-        if (view.listElementInfos is RecyclerView) {
-            when (activity?.resources?.configuration?.orientation) {
-                Configuration.ORIENTATION_PORTRAIT ->
-                    view.listElementInfos.layoutManager =
-                            GridLayoutManager(
-                                    view.listElementInfos.context,
-                                    mColumnCount - 2,
-                                    RecyclerView.VERTICAL,
-                                    false
-                            )
-                Configuration.ORIENTATION_LANDSCAPE ->
-                    view.listElementInfos.layoutManager =
-                            GridLayoutManager(
-                                    view.listElementInfos.context,
-                                    mColumnCount,
-                                    RecyclerView.VERTICAL,
-                                    false
-                            )
-            }
-            view.listElementInfos.adapter = MangaListAdapter(
-                    catalogPages = catalogPages,
-                    listType = mListType,
-                    elementInfoInteractionListener = this
-            )
-        }
+    private fun setupFavoriteListView() {
+        if (activity?.resources?.configuration?.orientation == Configuration.ORIENTATION_LANDSCAPE) binding.listElementInfos.layoutManager =
+                GridLayoutManager(
+                        binding.listElementInfos.context,
+                        mColumnCount,
+                        RecyclerView.VERTICAL,
+                        false
+                )
+        else binding.listElementInfos.layoutManager =
+                GridLayoutManager(
+                        binding.listElementInfos.context,
+                        mColumnCount - 2,
+                        RecyclerView.VERTICAL,
+                        false
+                )
+        binding.listElementInfos.adapter = MangaListAdapter(
+                catalogPages = catalogPages,
+                listType = mListType,
+                elementInfoInteractionListener = this
+        )
     }
 
     private fun setupToolbar() {
-        (activity as? MainActivity)?.supportActionBar?.title = null
-        if (activity?.spinnerPrimary is AppCompatSpinner) {
-            if (groupSpinnerAdapter != activity?.spinnerPrimary?.adapter)
-                setupSpinners()
+        (activity as? MainActivity)?.let {
+            it.supportActionBar?.title = null
+            if (groupSpinnerAdapter != it.binding.contentMain.spinnerPrimary.adapter)
+                setupSpinners(it)
             else {
-                activity?.spinnerPrimary?.visibility = View.VISIBLE
+                it.binding.contentMain.spinnerPrimary.visibility = View.VISIBLE
             }
         }
     }
 
-    private fun setupSpinners() {
-        if (activity?.spinnerPrimary is AppCompatSpinner) {
-            activity?.spinnerSecondary?.let {
-                it.adapter = sourceSpinnerAdapter
-                it.onItemSelectedListener = sourceSpinnerOnItemSelectedListener
-                it.visibility = View.VISIBLE
-            }
-            activity?.spinnerPrimary?.let {
-                it.adapter = groupSpinnerAdapter
-                it.onItemSelectedListener = groupSpinnerOnItemSelectedListener
-                it.visibility = View.VISIBLE
-            }
+    private fun setupSpinners(mainActivity: MainActivity) {
+        mainActivity.binding.contentMain.spinnerSecondary.apply {
+            adapter = sourceSpinnerAdapter
+            onItemSelectedListener = sourceSpinnerOnItemSelectedListener
+            visibility = View.VISIBLE
+        }
+        mainActivity.binding.contentMain.spinnerPrimary.apply {
+            adapter = groupSpinnerAdapter
+            onItemSelectedListener = groupSpinnerOnItemSelectedListener
+            visibility = View.VISIBLE
         }
     }
 
@@ -164,14 +155,14 @@ class FavoriteFragment :
                     position: Int,
                     id: Long
             ) {
-                swipeRefreshLayout?.isRefreshing = false
+                binding.swipeRefreshLayout.isRefreshing = false
                 disposeAllLoaderDisposables()
                 observeDataBase(
                         groupType = position,
                         onNextDatabaseChange = onNextDatabaseChange,
                         onDatabaseError = onDatabaseError
                 )
-                swipeRefreshLayout?.setOnRefreshListener {
+                binding.swipeRefreshLayout.setOnRefreshListener {
                     disposeAllLoaderDisposables()
                     observeDataBase(
                             groupType = position,
@@ -179,7 +170,7 @@ class FavoriteFragment :
                             onDatabaseError = onDatabaseError
                     )
                 }
-                swipeRefreshLayout?.isRefreshing = true
+                binding.swipeRefreshLayout.isRefreshing = true
             }
         }
     }
@@ -211,7 +202,7 @@ class FavoriteFragment :
                     0 -> null
                     else -> sourceSpinnerAdapter.getItem(position)
                 }
-                activity?.spinnerPrimary?.let {
+                (activity as? MainActivity)?.binding?.contentMain?.spinnerPrimary?.let {
                     it.onItemSelectedListener?.onItemSelected(
                             null, null, it.selectedItemPosition, it.selectedItemId
                     )
@@ -230,14 +221,13 @@ class FavoriteFragment :
                 itemThumbnailUri = mangaDb.mangaThumbnailUri
             }
         })
-        listElementInfos?.adapter?.notifyDataSetChanged()
-        swipeRefreshLayout?.isRefreshing = false
+        binding.listElementInfos.adapter?.notifyDataSetChanged()
+        binding.swipeRefreshLayout.isRefreshing = false
     }
 
     private val onDatabaseError: (Throwable) -> Unit = { error ->
         context?.toast(R.string.refresh_database_manga_list_error)
         Timber.e(error)
-        Crashlytics.logException(error)
     }
 
     override fun onMangaCardClick(mangaBinding: MangaBinding) {

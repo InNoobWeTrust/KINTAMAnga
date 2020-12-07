@@ -5,11 +5,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import androidx.appcompat.widget.AppCompatSpinner
-import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.RecyclerView
 import io.github.innoobwetrust.kintamanga.R
-import kotlinx.android.synthetic.main.holder_filter_single_choice.view.*
+import io.github.innoobwetrust.kintamanga.databinding.HolderFilterSingleChoiceBinding
 
 class FilterSingleChoiceAdapter(
         private val singleChoice: MutableMap<String, String>,
@@ -21,7 +19,8 @@ class FilterSingleChoiceAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
-        return ViewHolder(layoutInflater.inflate(R.layout.holder_filter_single_choice, parent, false))
+        val binding = HolderFilterSingleChoiceBinding.inflate(layoutInflater, parent, false)
+        return ViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -32,7 +31,7 @@ class FilterSingleChoiceAdapter(
                 dataMap = filterList[position].second,
                 defaultMap = filterRequiredDefaultSingleChoice
         )
-        holder.singleChoiceOption.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        holder.binding.singleChoiceOption.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {
             }
 
@@ -51,18 +50,14 @@ class FilterSingleChoiceAdapter(
                 else -> indexOf(singleChoice[key])
             }
         }
-        if (defaultIndex >= 0) holder.singleChoiceOption.setSelection(defaultIndex)
+        if (defaultIndex >= 0) holder.binding.singleChoiceOption.setSelection(defaultIndex)
     }
 
     override fun getItemCount(): Int {
         return filterList.size
     }
 
-    inner class ViewHolder(var view: View) : RecyclerView.ViewHolder(view) {
-        private val singleChoiceLabel: AppCompatTextView
-            get() = view.singleChoiceLabel
-        val singleChoiceOption: AppCompatSpinner
-            get() = view.singleChoiceOption
+    inner class ViewHolder(val binding: HolderFilterSingleChoiceBinding) : RecyclerView.ViewHolder(binding.root) {
         // List pair of label-value
         lateinit var dataList: List<Pair<String, String>>
         private lateinit var defaultMap: Map<String, String>
@@ -75,14 +70,14 @@ class FilterSingleChoiceAdapter(
                 defaultMap: Map<String, String>
         ) {
             this.key = key
-            singleChoiceLabel.text = label
+            binding.singleChoiceLabel.text = label
             dataList = dataMap.toList()
             val singleChoiceDataAdapter: ArrayAdapter<String> = ArrayAdapter(
-                    view.context,
+                    binding.root.context,
                     R.layout.themed_spinner_item,
                     dataList.map { it.first }
             ).also { it.setDropDownViewResource(R.layout.themed_spinner_dropdown_item) }
-            singleChoiceOption.adapter = singleChoiceDataAdapter
+            binding.singleChoiceOption.adapter = singleChoiceDataAdapter
             this.defaultMap = defaultMap
         }
 
@@ -90,11 +85,11 @@ class FilterSingleChoiceAdapter(
             val defaultIndex = dataList
                     .map { it.second }
                     .indexOf(defaultMap[key])
-            if (defaultIndex >= 0) singleChoiceOption.setSelection(defaultIndex)
+            if (defaultIndex >= 0) binding.singleChoiceOption.setSelection(defaultIndex)
         }
 
         override fun toString(): String {
-            return super.toString() + singleChoiceLabel.text
+            return super.toString() + binding.singleChoiceLabel.text
         }
     }
 }

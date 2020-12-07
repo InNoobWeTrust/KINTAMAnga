@@ -51,7 +51,7 @@ object MangaHereMangaInfoProcessor : DomMangaInfoProcessor {
     override fun headers(): Headers = instance()
     override fun cacheControl(): CacheControl = instance()
 
-    override fun mangaFromDocument(document: Document): MangaBinding? = MangaBinding().apply {
+    override fun mangaFromDocument(document: Document): MangaBinding = MangaBinding().apply {
         mangaSourceName = source.sourceName
         mangaUri = document.baseUri()
         mangaTitle = titleFromDocument(document)

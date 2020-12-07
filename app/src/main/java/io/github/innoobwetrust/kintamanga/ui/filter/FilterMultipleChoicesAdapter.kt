@@ -1,14 +1,11 @@
 package io.github.innoobwetrust.kintamanga.ui.filter
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
-import android.widget.LinearLayout
-import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.RecyclerView
 import io.github.innoobwetrust.kintamanga.R
-import kotlinx.android.synthetic.main.holder_filter_multiple_choices.view.*
+import io.github.innoobwetrust.kintamanga.databinding.HolderFilterMultipleChoicesBinding
 
 class FilterMultipleChoicesAdapter(
         private val multipleChoices: MutableSet<Pair<String, String>>,
@@ -20,9 +17,8 @@ class FilterMultipleChoicesAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
-        return ViewHolder(
-                layoutInflater.inflate(R.layout.holder_filter_multiple_choices, parent, false)
-        )
+        val binding = HolderFilterMultipleChoicesBinding.inflate(layoutInflater, parent, false)
+        return ViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -39,11 +35,7 @@ class FilterMultipleChoicesAdapter(
         return filterList.size
     }
 
-    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private val multipleChoicesOptionLabel: AppCompatTextView =
-                view.multipleChoicesOption.multipleChoicesOptionLabel
-        private val multipleChoicesOptionValues: LinearLayout =
-                view.multipleChoicesOption.multipleChoicesOptionValues
+    inner class ViewHolder(val binding: HolderFilterMultipleChoicesBinding) : RecyclerView.ViewHolder(binding.root) {
         private lateinit var dataList: List<Pair<String, String>>
         private var checkboxList: MutableList<CheckBox> = mutableListOf()
         private var key: String = ""
@@ -55,9 +47,9 @@ class FilterMultipleChoicesAdapter(
                 multipleChoices: MutableSet<Pair<String, String>>
         ) {
             this.key = key
-            multipleChoicesOptionLabel.text = label
+            binding.multipleChoicesOptionLabel.text = label
             dataList = dataMap.toList()
-            multipleChoicesOptionValues.let { linearLayout ->
+            binding.multipleChoicesOptionValues.let { linearLayout ->
                 dataList.forEach { (label, value) ->
                     val inflater = LayoutInflater.from(linearLayout.context)
                     val checkBox = inflater.inflate(
@@ -85,7 +77,7 @@ class FilterMultipleChoicesAdapter(
         }
 
         override fun toString(): String {
-            return super.toString() + multipleChoicesOptionLabel.text
+            return super.toString() + binding.multipleChoicesOptionLabel.text
         }
     }
 }

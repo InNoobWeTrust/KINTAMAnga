@@ -17,8 +17,8 @@ import com.afollestad.materialcab.MaterialCab
 import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.okhttp3.OkHttpUrlLoader
 import com.bumptech.glide.load.model.GlideUrl
-import com.crashlytics.android.Crashlytics
 import com.github.salomonbrys.kodein.conf.KodeinGlobalAware
+import com.github.salomonbrys.kodein.factory
 import com.github.salomonbrys.kodein.instance
 import com.github.salomonbrys.kotson.fromJson
 import com.github.salomonbrys.kotson.typedToJson
@@ -36,7 +36,8 @@ import io.github.innoobwetrust.kintamanga.ui.model.MangaBinding
 import io.github.innoobwetrust.kintamanga.ui.reader.ReaderActivity
 import io.github.innoobwetrust.kintamanga.util.extension.toast
 import io.github.innoobwetrust.kintamanga.util.extension.uriString
-import kotlinx.android.synthetic.main.activity_manga_info.*
+import okhttp3.Headers
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import rx.Subscription
 import timber.log.Timber
@@ -95,23 +96,23 @@ class MangaInfoActivity :
         }
         binding = DataBindingUtil.setContentView(this, R.layout.activity_manga_info)
         bind()
-        setSupportActionBar(toolbar)
+        setSupportActionBar(binding.toolbar)
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
             setDisplayShowHomeEnabled(true)
         }
-        listChapters.let {
+        binding.listChapters.let {
             it.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
             it.adapter = ChapterListAdapter(
                     mangaInfoActivity = this,
                     mangaBinding = mangaBinding,
                     selectedIndices = savedInstanceState
                             ?.getString(SavedInstanceStates.SELECTED_INDICES.key)
-                            ?.run { instance<Gson>().fromJson<MutableSet<Int>>(this) }
+                            ?.run { instance<Gson>().fromJson(this) }
                             ?: mutableSetOf()
             )
         }
-        mangaMenuFab.setOnClickListener(menuFabOnClickListener)
+        binding.mangaMenuFab.setOnClickListener(menuFabOnClickListener)
         cab = MaterialCab.restoreState(savedInstanceState, this, this)
     }
 
@@ -120,7 +121,12 @@ class MangaInfoActivity :
         Glide.get(applicationContext).registry.replace(
                 GlideUrl::class.java,
                 InputStream::class.java,
-                OkHttpUrlLoader.Factory(instance<OkHttpClient>("cover"))
+                OkHttpUrlLoader.Factory(
+                    instance<OkHttpClient>("cover")
+                        .newBuilder()
+                        .addInterceptor(factory<Headers, Interceptor>("headers")(mangaInfoProcessor.headers()))
+                        .build()
+                )
         )
         if (mangaBinding.chapters.isEmpty()) {
             backgroundRefresh(
@@ -140,7 +146,7 @@ class MangaInfoActivity :
         super.onSaveInstanceState(outState)
         outState.let {
             it.putSerializable(SavedInstanceStates.MANGA.key, mangaBinding)
-            (listChapters?.adapter as? ChapterListAdapter)?.selectedIndices?.run {
+            (binding.listChapters.adapter as? ChapterListAdapter)?.selectedIndices?.run {
                 it.putString(
                         SavedInstanceStates.SELECTED_INDICES.key,
                         instance<Gson>().typedToJson(this)
@@ -168,7 +174,7 @@ class MangaInfoActivity :
     }
 
     override fun onBackPressed() {
-        (listChapters?.adapter as? ChapterListAdapter)?.let {
+        (binding.listChapters.adapter as? ChapterListAdapter)?.let {
             if (it.selectedIndices.isNotEmpty()) {
                 it.clearSelected()
                 return
@@ -182,7 +188,7 @@ class MangaInfoActivity :
     }
 
     override fun onCabItemClicked(item: MenuItem?): Boolean {
-        (listChapters?.adapter as? ChapterListAdapter)?.let {
+        (binding.listChapters.adapter as? ChapterListAdapter)?.let {
             // Because chapter index is ordered in revert, we need to fix the list of indices
             val size = mangaBinding.chapters.size
             val chapterSelectedIndices = it.selectedIndices.map { index -> size - index - 1 }
@@ -213,7 +219,7 @@ class MangaInfoActivity :
     }
 
     override fun onCabFinished(cab: MaterialCab?): Boolean {
-        (listChapters?.adapter as? ChapterListAdapter)?.clearSelected()
+        (binding.listChapters.adapter as? ChapterListAdapter)?.clearSelected()
         return true
     }
 
@@ -225,18 +231,18 @@ class MangaInfoActivity :
 
     private fun showFABMenu() {
         isFABOpen = true
-        mangaClearFab?.animate()?.translationX(-resources.getDimension(R.dimen.standard_305))
-        mangaShareFab?.animate()?.translationX(-resources.getDimension(R.dimen.standard_205))
-        mangaFavoriteFab?.animate()?.translationX(-resources.getDimension(R.dimen.standard_105))
-        mangaMenuFab?.setImageResource(R.drawable.ic_cancel_white_24dp)
+        binding.mangaClearFab.animate()?.translationX(-resources.getDimension(R.dimen.standard_305))
+        binding.mangaShareFab.animate()?.translationX(-resources.getDimension(R.dimen.standard_205))
+        binding.mangaFavoriteFab.animate()?.translationX(-resources.getDimension(R.dimen.standard_105))
+        binding.mangaMenuFab.setImageResource(R.drawable.ic_cancel_white_24dp)
     }
 
     private fun closeFABMenu() {
         isFABOpen = false
-        mangaClearFab?.animate()?.translationX(0f)
-        mangaShareFab?.animate()?.translationX(0f)
-        mangaFavoriteFab?.animate()?.translationX(0f)
-        mangaMenuFab?.setImageResource(R.drawable.ic_menu_white_24dp)
+        binding.mangaClearFab.animate()?.translationX(0f)
+        binding.mangaShareFab.animate()?.translationX(0f)
+        binding.mangaFavoriteFab.animate()?.translationX(0f)
+        binding.mangaMenuFab.setImageResource(R.drawable.ic_menu_white_24dp)
     }
 
     private val menuFabOnClickListener: (View) -> Unit = { _ ->
@@ -300,12 +306,12 @@ class MangaInfoActivity :
     }
 
     private val onRefreshSuccess: (Boolean) -> Unit = { success ->
-        progress?.visibility = View.GONE
-        mangaClearFab?.setOnClickListener(mangaClearFabOnClickListener)
-        mangaShareFab?.setOnClickListener(shareFabOnClickListener)
-        mangaFavoriteFab?.setOnClickListener(favoriteFabOnClickListener)
+        binding.progress.visibility = View.GONE
+        binding.mangaClearFab.setOnClickListener(mangaClearFabOnClickListener)
+        binding.mangaShareFab.setOnClickListener(shareFabOnClickListener)
+        binding.mangaFavoriteFab.setOnClickListener(favoriteFabOnClickListener)
         if (success) {
-            listChapters?.adapter?.notifyDataSetChanged()
+            binding.listChapters.adapter?.notifyDataSetChanged()
         } else {
             toast(R.string.manga_info_refresh_failed_text)
         }
@@ -314,7 +320,6 @@ class MangaInfoActivity :
     private val onRefreshError: (Throwable) -> Unit = { error ->
         toast(R.string.manga_info_refresh_error_text)
         Timber.e(error)
-        Crashlytics.logException(error)
     }
 
     private val onDownloadStatusChange: (Download) -> Unit = { download ->
@@ -329,14 +334,12 @@ class MangaInfoActivity :
                 }
                 ?: Exception("Can not find chapter: ${download.chapter.chapterUri}").let {
             Timber.e(it)
-            Crashlytics.logException(it)
         }
     }
 
     private val onObservableDownloadError: (Throwable) -> Unit = { error ->
         toast(R.string.observe_download_failed_text)
         Timber.e(error)
-        Crashlytics.logException(error)
     }
 
     @Throws(Exception::class)
@@ -345,7 +348,12 @@ class MangaInfoActivity :
         Glide.get(applicationContext).registry.replace(
                 GlideUrl::class.java,
                 InputStream::class.java,
-                OkHttpUrlLoader.Factory(instance<OkHttpClient>("cover"))
+                OkHttpUrlLoader.Factory(
+                    instance<OkHttpClient>("cover")
+                        .newBuilder()
+                        .addInterceptor(factory<Headers, Interceptor>("headers")(mangaInfoProcessor.headers()))
+                        .build()
+                )
         )
         if (0 == requestCode && Activity.RESULT_OK == resultCode && null != data) {
             val updatedMangaBinding =
@@ -362,7 +370,7 @@ class MangaInfoActivity :
     }
 
     override fun onLongClick(index: Int) {
-        listChapters?.setDragSelectActive(true, index)
+        binding.listChapters.setDragSelectActive(true, index)
     }
 
     override fun onSelectionChanged(count: Int) {
@@ -388,7 +396,7 @@ class MangaInfoActivity :
     }
 
     override fun onChapterClick(chapterBinding: ChapterBinding) {
-        if (View.VISIBLE == progress?.visibility) return
+        if (View.VISIBLE == binding.progress.visibility) return
         val readerIntent: Intent =
                 Intent(this, ReaderActivity::class.java)
                         .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
@@ -409,7 +417,6 @@ class MangaInfoActivity :
                 onError = { error ->
                     toast(R.string.download_request_prepare_failed_text)
                     Timber.e(error)
-                    Crashlytics.logException(error)
                 }
         )
         chapterBindings.forEach { it.chapterDownloadStatus = DownloadStatus.QUEUE }

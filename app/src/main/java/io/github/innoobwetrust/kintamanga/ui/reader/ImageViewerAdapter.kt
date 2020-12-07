@@ -1,27 +1,28 @@
 package io.github.innoobwetrust.kintamanga.ui.reader
 
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.AppCompatButton
-import androidx.appcompat.widget.AppCompatImageView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.model.GlideUrl
+import com.bumptech.glide.load.model.Headers
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
+import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
-import com.github.piasy.biv.indicator.progresspie.ProgressPieIndicator
-import com.github.piasy.biv.loader.ImageLoader
-import com.github.piasy.biv.view.BigImageView
 import io.github.innoobwetrust.kintamanga.R
+import io.github.innoobwetrust.kintamanga.databinding.HolderImageViewerBinding
 import io.github.innoobwetrust.kintamanga.model.Page
 import io.github.innoobwetrust.kintamanga.ui.model.ChapterBinding
-import kotlinx.android.synthetic.main.holder_image_viewer.view.*
 import java.io.File
 
 class ImageViewerAdapter(
         private var viewer: ViewerFragment?,
         private var chapterBinding: ChapterBinding?,
+        private val glideHeaders: Headers?,
         private val viewerType: ViewerTypes
 ) : RecyclerView.Adapter<ImageViewerAdapter.ViewHolder>() {
 
@@ -38,33 +39,24 @@ class ImageViewerAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val inflatedView = LayoutInflater.from(parent.context)
-                .inflate(R.layout.holder_image_viewer, parent, false)
-        if (viewerType == ViewerTypes.WEBTOON) {
-            inflatedView.imageViewerLayout?.layoutParams?.height =
-                    ViewGroup.LayoutParams.WRAP_CONTENT
-        }
-        return ViewHolder(inflatedView = inflatedView)
+        val layoutInflater = LayoutInflater.from(parent.context)
+        val binding = HolderImageViewerBinding.inflate(layoutInflater, parent, false)
+        return ViewHolder(binding = binding)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         chapterBinding?.let { binding ->
-            holder.setImage(binding.chapterPages[position])
-            holder.touchOverlay.setOnClickListener {
-                (viewer?.activity as? ViewerFragmentListener)
-                        ?.onViewerToggleControl()
+            if (viewerType == ViewerTypes.WEBTOON) {
+                holder.binding.imageViewerLayout.layoutParams.height =
+                        ViewGroup.LayoutParams.WRAP_CONTENT
             }
-            holder.failureImage.setOnClickListener {
-                (viewer?.activity as? ViewerFragmentListener)
-                        ?.onViewerToggleControl()
-            }
-            holder.reloadImageButton.setOnClickListener {
-                holder.touchOverlay.visibility = View.VISIBLE
-                holder.failureView.visibility = View.GONE
-                holder.setImage(binding.chapterPages[position])
-            }
-            holder.chapterImageView.ssiv.setOnTouchListener { _, motionEvent ->
-                viewer?.gestureDetector?.onTouchEvent(motionEvent) ?: true
+            holder.bind(binding.chapterPages[position], viewer?.serverIndex
+                    ?: 0)
+            holder.binding.chapterImage.apply {
+                setOnTouchListener { _, motionEvent ->
+                    viewer?.view?.performClick()
+                    viewer?.gestureDetector?.onTouchEvent(motionEvent) ?: true
+                }
             }
         }
     }
@@ -76,81 +68,64 @@ class ImageViewerAdapter(
     override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
         viewer = null
         chapterBinding = null
-        System.gc()
+//        System.gc()
         super.onDetachedFromRecyclerView(recyclerView)
     }
 
     override fun onViewRecycled(holder: ViewHolder) {
-        holder.let {
-            it.touchOverlay.setOnClickListener(null)
-            it.failureImage.setOnClickListener(null)
-            it.reloadImageButton.setOnClickListener(null)
-            it.chapterImageView.setOnClickListener(null)
-            it.chapterImageView.ssiv.setOnTouchListener(null)
-            it.chapterImageView.ssiv.recycle()
+        holder.binding.apply {
+            chapterImage.setOnClickListener(null)
+            chapterImage.recycle()
         }
-        System.gc()
+//        System.gc()
         super.onViewRecycled(holder)
     }
 
     inner class ViewHolder(
-            inflatedView: View
-    ) : RecyclerView.ViewHolder(inflatedView) {
-        val chapterImageView: BigImageView = inflatedView.chapterImage
-        val touchOverlay: View = inflatedView.touchOverlay
-        val failureView: ConstraintLayout = inflatedView.failureView
-        val failureImage: AppCompatImageView = inflatedView.failureImage
-        val reloadImageButton: AppCompatButton = inflatedView.reloadImageButton
+            val binding: HolderImageViewerBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
+        private lateinit var page: Page
 
-        init {
-            chapterImageView.apply {
-                ssiv.setMinimumDpi(90)
-                ssiv.setMinimumTileDpi(180)
-                ssiv.setPanLimit(SubsamplingScaleImageView.PAN_LIMIT_INSIDE)
-                ssiv.setOnImageEventListener(
-                        object : SubsamplingScaleImageView.OnImageEventListener {
-                            override fun onReady() {}
-                            override fun onTileLoadError(p0: Exception?) {}
-                            override fun onPreviewReleased() {}
-                            override fun onPreviewLoadError(p0: Exception?) {}
-                            override fun onImageLoaded() {
-                                this@ViewHolder.touchOverlay.visibility = View.GONE
-                                this@ViewHolder.failureView.visibility = View.GONE
-                            }
-
-                            override fun onImageLoadError(p0: Exception?) {
-                                this@ViewHolder.touchOverlay.visibility = View.VISIBLE
-                                this@ViewHolder.failureView.visibility = View.VISIBLE
-                                onFail(Exception("Failed to load image from file"))
-                            }
+        fun bind(page: Page, serverIndex: Int) {
+            this.page = page
+            binding.chapterImage.apply {
+                recycle()
+                setMinimumDpi(90)
+                setMinimumTileDpi(180)
+                setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_INSIDE)
+                setPanLimit(SubsamplingScaleImageView.PAN_LIMIT_INSIDE)
+            }
+            if (page.imageFileUri.isBlank() && page.imageUrls[serverIndex].isBlank()) {
+                binding.chapterImage.setImage(ImageSource.resource(R.drawable.broken_image_white_192x192))
+                return
+            }
+            var loader = Glide.with(binding.chapterImage).downloadOnly()
+            when {
+                page.imageFileUri.isNotBlank() -> loader = loader.load(page.imageFileUri)
+                page.imageUrls[serverIndex].isNotBlank() -> loader = loader.load(GlideUrl(page.imageUrls[serverIndex], glideHeaders))
+            }
+            val circularProgressDrawable = CircularProgressDrawable(binding.root.context).apply {
+                strokeWidth = 5f
+                centerRadius = 30f
+                start()
+            }
+            loader
+                    .placeholder(circularProgressDrawable)
+                    .into(object : CustomTarget<File>() {
+                        override fun onLoadCleared(placeholder: Drawable?) {
+                            circularProgressDrawable.start()
                         }
-                )
-                setImageLoaderCallback(object : ImageLoader.Callback {
-                    override fun onFinish() {}
-                    override fun onCacheHit(image: File?) {}
-                    override fun onCacheMiss(image: File?) {}
-                    override fun onProgress(progress: Int) {}
-                    override fun onStart() {}
-                    override fun onSuccess(image: File?) {}
-                    override fun onFail(error: java.lang.Exception?) {
-                        this@ViewHolder.touchOverlay.visibility = View.VISIBLE
-                        this@ViewHolder.failureView.visibility = View.VISIBLE
-                    }
-                })
-                setProgressIndicator(ProgressPieIndicator())
-            }
-        }
 
-        fun setImage(page: Page) {
-            chapterImageView.apply {
-                Glide.with(this).clear(this)
-                ssiv.recycle()
-                if (!page.imageFileUri.isBlank()) {
-                    showImage(Uri.parse(page.imageFileUri))
-                } else if (!page.imageUrls[viewer!!.serverIndex!!].isBlank()) {
-                    showImage(Uri.parse(page.imageUrls[viewer!!.serverIndex!!]))
-                }
-            }
+                        override fun onLoadFailed(errorDrawable: Drawable?) {
+                            circularProgressDrawable.stop()
+                            binding.chapterImage.setImage(ImageSource.resource(R.drawable.broken_image_white_192x192))
+                        }
+
+                        override fun onResourceReady(resource: File, transition: Transition<in File>?) {
+                            circularProgressDrawable.stop()
+                            binding.chapterImage.setImage(ImageSource.uri(Uri.fromFile(resource)))
+                        }
+                    })
         }
     }
 }

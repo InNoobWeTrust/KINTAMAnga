@@ -44,10 +44,10 @@ object HocVienTruyenTranhMangaInfoProcessor : DomMangaInfoProcessor {
     override var chaptersUpdateTimeAttribute: String = "text"
     override var chaptersIndexedDescending: Boolean = true
 
-    override fun headers(): Headers = instance()
+    override fun headers(): Headers = instance<Headers>().newBuilder().add("Referer", source.rootUri).build()
     override fun cacheControl(): CacheControl = instance()
 
-    override fun mangaFromDocument(document: Document): MangaBinding? = MangaBinding().apply {
+    override fun mangaFromDocument(document: Document): MangaBinding = MangaBinding().apply {
         mangaSourceName = source.sourceName
         mangaUri = document.baseUri()
         mangaTitle = titleFromDocument(document)

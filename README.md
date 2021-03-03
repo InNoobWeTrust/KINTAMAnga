@@ -35,6 +35,6 @@ And no, no Java here, we don't do that here, Kotlin or quit game. I can do Java 
 
 If you want to mess this repo by integrating React-native, NativeScript, Xamarin, Ionic, Qt, Beeware, Jasonelle, Love (Lua), etc... be sure to do it properly.
 
-![tsundere rori Rin](https://vignette.wikia.nocookie.net/typemoon/images/9/90/Tumblr_lsfalnlSZN1qieicp.gif)
+![tsundere rori Rin](https://steamuserimages-a.akamaihd.net/ugc/709654652727315800/61B71DCB461E3D49FD4E44CC01CC3E54134A0A3B/)
 
 Flutter integration PRs are more than welcome! 😘

@@ -133,7 +133,7 @@ dependencies {
     implementation 'com.afollestad:material-cab:0.1.12'
 
     // Json
-    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'com.google.code.gson:gson:2.8.7'
     implementation 'com.github.salomonbrys.kotson:kotson:2.5.0'
 
     // Database

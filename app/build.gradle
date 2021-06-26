@@ -108,7 +108,7 @@ dependencies {
     implementation 'org.jsoup:jsoup:1.13.1'
 
     // Javascript engine
-    implementation 'com.squareup.duktape:duktape-android:1.3.0'
+    implementation 'com.squareup.duktape:duktape-android:1.4.0'
 
     // Image loading library focused on smooth scrolling
     implementation "com.github.bumptech.glide:glide:4.11.0"

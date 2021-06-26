@@ -99,7 +99,7 @@ dependencies {
     implementation "com.github.salomonbrys.kodein:kodein-conf:$kodeinVersion"
 
     // Network
-    implementation 'com.squareup.okhttp3:okhttp:4.9.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.9.1'
 
     // Persistent cookieJar
     implementation 'com.github.franmontiel:PersistentCookieJar:v1.0.1'

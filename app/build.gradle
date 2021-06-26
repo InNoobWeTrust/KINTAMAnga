@@ -129,7 +129,7 @@ dependencies {
     implementation 'com.github.pwittchen:reactivenetwork:0.13.0'
 
     // DragSelectRecyclerView
-    implementation 'com.afollestad:drag-select-recyclerview:1.0.0'
+    implementation 'com.afollestad:drag-select-recyclerview:2.4.0'
     implementation 'com.afollestad:material-cab:0.1.12'
 
     // Json
